@@ -1,298 +1,1488 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Atharva Devendra Gajbe — Cybersecurity & Blockchain Portfolio" />
-  <title>Atharva Devendra Gajbe — Portfolio</title>
-  <link rel="stylesheet" href="styles.css">
-  <script defer src="script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atharva Gajbe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0c0f;
+    --panel:#111418;
+    --panel-2:#0d0f12;
+    --line:#22262b;
+    --line-soft:#181b1f;
+    --text:#f2f4f6;
+    --text-dim:#9298a0;
+    --text-faint:#565b61;
+    --accent:#4fe3c1;
+    --accent-dim:#2a8f7d;
+    --accent-ink:#04211c;
+    --flag:#ff6b57;
+    --font-display:"Sora", "Segoe UI", sans-serif;
+    --font-body:"Plus Jakarta Sans", "Segoe UI", sans-serif;
+    --font-mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{color-scheme:dark;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--accent-dim); color:#eafff9;}
+  a{color:var(--accent); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+  img{max-width:100%;}
+
+  .wrap{ max-width:960px; margin:0 auto; padding:0 28px; }
+
+  section{ padding:100px 0; border-bottom:1px solid var(--line-soft); }
+  section:last-of-type{ border-bottom:none; }
+
+  .kicker{ display:flex; align-items:baseline; gap:14px; margin:0 0 40px; }
+  .kicker .num{ font-family:var(--font-mono); font-size:12.5px; color:var(--accent); }
+  .kicker h2{
+    margin:0; font-family:var(--font-display); font-weight:700;
+    font-size:clamp(22px,3vw,28px); letter-spacing:-.01em; color:var(--text);
+  }
+  .kicker .rule{ flex:1; height:1px; background:var(--line); }
+  .kicker.reveal{ opacity:1; transform:none; clip-path:inset(0 100% 0 0); transition:clip-path .85s cubic-bezier(.2,.7,.3,1); }
+  .kicker.reveal.in-view{ clip-path:inset(0 0 0 0); }
+
+  /* ---------- ambient background network ---------- */
+  #bgcanvas{
+    position:fixed; inset:0; z-index:-1;
+    width:100%; height:100%; display:block;
+  }
+
+  /* ---------- fixed chrome ---------- */
+  .scrollbar{
+    position:fixed; top:0; left:0; z-index:60; height:2px; width:0%;
+    background:var(--accent); box-shadow:0 0 8px rgba(79,227,193,.5);
+  }
+  .id-badge{
+    position:fixed; top:22px; left:22px; z-index:70;
+    width:44px; height:44px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.02em;
+    color:var(--text); background:var(--panel);
+  }
+  .id-badge::before{
+    content:""; position:absolute; inset:-4px; border-radius:50%;
+    border:1px dashed var(--accent-dim);
+    animation:spin 9s linear infinite;
+  }
+  @media (prefers-reduced-motion:reduce){ .id-badge::before{ animation:none; } }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .topbar-right{
+    position:fixed; top:22px; right:24px; z-index:70;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    max-width:min(60vw,420px);
+  }
+  .status-pill{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--text-dim); background:var(--panel); border:1px solid var(--line);
+    padding:8px 14px; border-radius:999px; white-space:nowrap;
+  }
+  .status-pill .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 3px rgba(79,227,193,.18);
+    animation:blink 1.6s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion:reduce){ .status-pill .dot{ animation:none; } }
+  @keyframes blink{ 50%{ opacity:.35; } }
+  @media (max-width:560px){ .id-badge{ display:none; } .status-pill{ display:none; } }
+
+  .lang-switch select{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--text-dim); background:var(--panel); border:1px solid var(--line);
+    padding:7px 10px; border-radius:999px; cursor:pointer; appearance:none;
+    -webkit-appearance:none;
+  }
+  .lang-switch select:hover{ color:var(--text); border-color:var(--text-faint); }
+  .lang-switch select:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  @media (max-width:560px){ .topbar-right{ top:auto; bottom:78px; right:16px; left:16px; max-width:none; justify-content:flex-end; } }
+
+  .pillnav{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%); z-index:70;
+    display:flex; align-items:center; gap:2px;
+    background:rgba(17,20,24,.9); backdrop-filter:blur(10px);
+    border:1px solid var(--line); border-radius:999px; padding:6px;
+  }
+  .pillnav a{
+    position:relative; z-index:1;
+    font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
+    color:var(--text-dim); padding:10px 16px; border-radius:999px; white-space:nowrap;
+    transition:color .2s ease;
+  }
+  .pillnav a:hover, .pillnav a.active{ color:var(--bg); text-decoration:none; }
+  .pillnav .pill-indicator{
+    position:absolute; top:6px; left:6px; height:calc(100% - 12px);
+    background:var(--accent); border-radius:999px; z-index:0;
+    transition:left .35s cubic-bezier(.2,.7,.3,1), width .35s cubic-bezier(.2,.7,.3,1);
+  }
+  @media (max-width:700px){ .pillnav{ display:none; } }
+
+  .cursor-dot, .cursor-ring{ position:fixed; top:0; left:0; z-index:90; pointer-events:none; border-radius:50%; transform:translate(-50%,-50%); }
+  .cursor-dot{ width:6px; height:6px; background:var(--accent); }
+  .cursor-ring{ width:32px; height:32px; border:1px solid var(--accent-dim); opacity:.6; transition:width .2s ease,height .2s ease,border-color .2s ease,opacity .2s ease; }
+  .cursor-ring.hover{ width:56px; height:56px; border-color:var(--accent); opacity:1; }
+  body.custom-cursor, body.custom-cursor a, body.custom-cursor button{ cursor:none; }
+
+  .curtain{
+    position:fixed; inset:0; z-index:100; background:var(--bg);
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .7s cubic-bezier(.6,0,.2,1);
+  }
+  .curtain.hide{ transform:translateY(-100%); pointer-events:none; }
+  .curtain-text{ font-family:var(--font-mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); }
+  .cursor-blink{ display:inline-block; width:.55em; height:1em; background:var(--accent); vertical-align:-2px; margin-left:2px; animation:blink 1s step-end infinite; }
+  @media (prefers-reduced-motion:reduce){ .curtain{ display:none; } .cursor-blink{ animation:none; } }
+
+  /* ---------- reveal + word-scrub ---------- */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1); }
+  .reveal.in-view{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion:reduce){ .reveal{ transition:none; opacity:1; transform:none; } }
+  .sw{ color:var(--text-faint); transition:color .2s linear, opacity .2s linear; opacity:.4; }
+  @media (prefers-reduced-motion:reduce){ .sw{ color:var(--text); opacity:1; } }
+
+  /* ---------- hero ---------- */
+  .hero{ position:relative; padding:150px 0 120px; overflow:hidden; border-bottom:1px solid var(--line-soft); background:var(--bg); }
+  .hero .wrap{ position:relative; z-index:2; }
+  .hero-photo-bg{
+    position:absolute; top:0; right:0; height:100%; width:min(46%,520px);
+    -webkit-mask-image:linear-gradient(90deg, transparent, #000 30%);
+    mask-image:linear-gradient(90deg, transparent, #000 30%);
+    z-index:1; pointer-events:none;
+  }
+  .hero-photo-bg img{
+    width:100%; height:100%; object-fit:cover; object-position:top center;
+    filter:grayscale(1) contrast(1.05) brightness(.85);
+    opacity:.55;
+  }
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--accent);
+    text-transform:uppercase; letter-spacing:.16em; margin-bottom:20px;
+  }
+  h1.name{
+    position:relative; z-index:3;
+    margin:0 0 18px; font-family:var(--font-display); font-weight:800;
+    font-size:clamp(44px,8vw,84px); line-height:1; letter-spacing:-.02em;
+    color:#fff;
+    text-shadow:0 2px 24px rgba(0,0,0,.5);
+    text-wrap:balance; max-width:15ch;
+    will-change:opacity, filter, transform;
+    transition:opacity .15s linear, filter .15s linear, transform .15s linear;
+  }
+  @media (prefers-reduced-motion:reduce){ h1.name{ transition:none; } }
+  h1.name .ch{ display:inline-block; opacity:0; transform:translateY(.4em); filter:blur(6px); animation:chIn .85s cubic-bezier(.2,.7,.3,1) forwards; }
+  @keyframes chIn{ to{ opacity:1; transform:translateY(0); filter:blur(0); } }
+  @media (prefers-reduced-motion:reduce){ h1.name .ch{ animation:none; opacity:1; transform:none; filter:none; } }
+
+  .role-line{ font-family:var(--font-mono); font-size:14px; color:var(--text-dim); margin-bottom:30px; }
+  .lede{ max-width:56ch; font-size:17px; margin:0 0 40px; }
+  .lede strong{ color:var(--text); font-weight:700; }
+  .lede .sw.in-view{ color:var(--text); opacity:1; }
+
+  .hero-corner-stat{
+    position:absolute; top:118px; right:36px; z-index:2; text-align:right;
+  }
+  .hero-corner-stat .n{
+    display:block; font-family:var(--font-display); font-weight:800;
+    font-size:clamp(30px,4vw,46px); line-height:.9; color:#fff;
+    text-shadow:0 2px 16px rgba(0,0,0,.6);
+  }
+  .hero-corner-stat .l{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--text-dim);
+    text-shadow:0 1px 8px rgba(0,0,0,.7);
+  }
+  @media (max-width:640px){ .hero-corner-stat{ display:none; } }
+
+  .meta-row{ display:flex; flex-wrap:wrap; gap:10px 12px; align-items:center; }
+  .meta-chip{
+    display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:12px;
+    color:var(--text-dim); border:1px solid var(--line); background:var(--panel); padding:7px 12px; border-radius:3px;
+  }
+  .meta-chip.accent{ color:var(--accent); border-color:var(--accent-dim); }
+  .meta-chip a{ color:inherit; }
+  .meta-chip a:hover{ color:var(--accent); }
+
+  /* ---------- capabilities ---------- */
+  .cap-list{ border-top:1px solid var(--line-soft); }
+  .cap-row{
+    display:flex; align-items:baseline; justify-content:space-between; gap:24px;
+    padding:26px 0; border-bottom:1px solid var(--line-soft); cursor:default;
+  }
+  .cap-row .cap-title{
+    font-family:var(--font-display); font-weight:700; font-size:clamp(20px,3.4vw,30px);
+    color:var(--text); transition:color .2s ease;
+  }
+  .cap-row:hover .cap-title{ color:var(--accent); }
+  .cap-row .cap-desc{ color:var(--text-dim); font-size:14px; max-width:34ch; text-align:right; }
+  .cap-preview{
+    position:fixed; z-index:80; pointer-events:none; opacity:0; transform:translate(-50%,-50%) scale(.9);
+    transition:opacity .18s ease, transform .18s ease;
+    background:var(--panel); border:1px solid var(--line); border-radius:8px;
+    padding:14px 16px; font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+    white-space:nowrap; box-shadow:0 20px 40px rgba(0,0,0,.4);
+  }
+  .cap-preview.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .cap-preview b{ display:block; color:var(--accent); margin-bottom:4px; letter-spacing:.06em; text-transform:uppercase; font-size:9.5px; }
+
+  /* ---------- experience (log timeline) ---------- */
+  .log{ display:flex; flex-direction:column; }
+  .log-entry{ position:relative; padding:0 0 34px 28px; border-left:1px solid var(--line); }
+  .log-entry:last-child{ padding-bottom:0; }
+  .log-entry::before{ content:""; position:absolute; left:-4.5px; top:4px; width:8px; height:8px; border-radius:50%; background:var(--bg); border:2px solid var(--accent); }
+  .log-head{ display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 14px; margin-bottom:8px; }
+  .log-role{ font-family:var(--font-display); font-weight:700; font-size:17px; color:var(--text); }
+  .log-org{ color:var(--accent); font-weight:600; }
+  .log-date{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em; margin-left:auto; }
+  .log-entry ul{ margin:0; padding-left:18px; color:var(--text-dim); font-size:15px; }
+  .log-entry li{ margin-bottom:6px; }
+  .log-entry li::marker{ color:var(--accent-dim); }
+
+  /* ---------- projects (mockup grid) ---------- */
+  .filter-bar{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+  .filter-btn{
+    font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--text-dim); background:transparent; border:1px solid var(--line); border-radius:999px;
+    padding:6px 15px; cursor:pointer; transition:color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .filter-btn:hover{ color:var(--text); border-color:var(--text-faint); }
+  .filter-btn.active{ color:var(--bg); background:var(--accent); border-color:var(--accent); }
+
+  .proj-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:20px; align-items:start; }
+  @media (max-width:700px){ .proj-grid{ grid-template-columns:1fr; } }
+  .proj-card[hidden]{ display:none; }
+  .proj-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:18px; display:flex; flex-direction:column; will-change:transform;
+    transition:border-color .2s ease;
+  }
+  .proj-card:hover{ border-color:var(--accent-dim); }
+  .proj-mock{
+    border:1px solid var(--line); border-radius:8px; background:var(--panel-2);
+    padding:16px; margin-bottom:16px; min-height:96px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .proj-mock .dots{ display:flex; gap:5px; margin-bottom:14px; }
+  .proj-mock .dots span{ width:6px; height:6px; border-radius:50%; background:var(--line); }
+  .proj-mock .glyph{ font-family:var(--font-mono); font-size:11px; color:var(--accent-dim); letter-spacing:.04em; }
+  .proj-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .proj-id{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); }
+  .tag{
+    font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    padding:3px 8px; border-radius:3px; border:1px solid var(--accent-dim); color:var(--accent); background:rgba(79,227,193,.06);
+  }
+  .proj-card h3{ margin:0 0 8px; font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--text); }
+  .proj-card p{ margin:0 0 14px; color:var(--text-dim); font-size:14px; flex:1; }
+  .chipline{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .chip{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); border:1px solid var(--line); padding:3px 8px; border-radius:3px; }
+  .chip.ref{ color:var(--flag); border-color:rgba(255,107,87,.35); }
+  .proj-foot-label{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+  .proj-toggle{
+    margin-top:auto; align-self:flex-start; display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--font-mono); font-size:11.5px; color:var(--accent); background:transparent; border:none; padding:0; cursor:pointer;
+  }
+  .proj-toggle .arrow{ display:inline-block; transition:transform .2s ease; font-size:10px; }
+  .proj-toggle[aria-expanded="true"] .arrow{ transform:rotate(180deg); }
+  .proj-detail{ max-height:0; overflow:hidden; transition:max-height .4s ease; }
+  .proj-detail ul{ margin:14px 0 0; padding-left:18px; color:var(--text-dim); font-size:13.5px; }
+  .proj-detail li{ margin-bottom:8px; }
+  .proj-detail li::marker{ color:var(--accent-dim); }
+
+  /* ---------- research spotlight ---------- */
+  .research-box{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:32px; }
+  .research-box h3{ margin:0 0 6px; font-family:var(--font-display); font-weight:700; font-size:22px; color:var(--text); }
+  .research-box .sub{ font-family:var(--font-mono); font-size:12px; color:var(--text-faint); margin-bottom:20px; }
+  .research-box p.desc{ color:var(--text-dim); font-size:15px; max-width:70ch; margin:0 0 26px; }
+  .stat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  @media (max-width:640px){ .stat-grid{ grid-template-columns:repeat(2,1fr); } }
+  .stat-tile{ background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:16px 14px; cursor:help; }
+  .stat-num{ font-family:var(--font-display); font-size:clamp(24px,3vw,30px); font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; line-height:1; margin-bottom:6px; }
+  .stat-label{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.05em; }
+  .note{ font-size:13.5px; color:var(--text-faint); border-left:2px solid var(--accent-dim); padding-left:12px; }
+  .classifier-row{ display:flex; flex-wrap:wrap; gap:8px; margin:18px 0 24px; }
+  .method-list{ margin:22px 0 0; padding-left:18px; color:var(--text-dim); font-size:14.5px; }
+  .method-list li{ margin-bottom:8px; }
+  .method-list li::marker{ color:var(--accent-dim); }
+
+  /* ---------- publications as quote cards ---------- */
+  .quote-grid{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media (max-width:700px){ .quote-grid{ grid-template-columns:1fr; } }
+  .quote-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:26px; }
+  .quote-card .mark{ font-family:var(--font-display); font-size:40px; color:var(--accent-dim); line-height:1; margin-bottom:6px; }
+  .quote-card h4{ margin:0 0 10px; font-family:var(--font-display); font-weight:700; font-size:16px; color:var(--text); }
+  .quote-card p{ margin:0 0 16px; color:var(--text-dim); font-size:14px; }
+  .quote-card .venue{ font-family:var(--font-mono); font-size:11.5px; color:var(--accent); }
+
+  /* ---------- credentials ---------- */
+  .cred-grid{ display:grid; grid-template-columns:1.1fr 1fr; gap:44px; }
+  @media (max-width:700px){ .cred-grid{ grid-template-columns:1fr; gap:32px; } }
+  .cred-col h3{ font-family:var(--font-mono); font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-faint); margin:0 0 18px; }
+  .cert-item{ display:flex; gap:10px; padding:10px 0; border-top:1px solid var(--line-soft); font-size:14px; color:var(--text-dim); }
+  .cert-item:first-of-type{ border-top:none; }
+  .cert-item b{ color:var(--text); font-weight:700; }
+  .edu-item{ margin-bottom:22px; }
+  .edu-item .deg{ color:var(--text); font-weight:700; font-size:15.5px; font-family:var(--font-display); }
+  .edu-item .school{ color:var(--accent); font-size:13.5px; }
+  .edu-item .when{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.05em; }
+  .mod-table{ width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+  .mod-table td{ padding:6px 0; border-top:1px solid var(--line-soft); color:var(--text-dim); }
+  .mod-table td:last-child{ text-align:right; font-family:var(--font-mono); color:var(--accent); font-variant-numeric:tabular-nums; }
+  .mod-table tr.extra{ display:none; }
+  .mod-table.expanded tr.extra{ display:table-row; }
+  .mod-toggle{ font-family:var(--font-mono); font-size:11.5px; color:var(--accent); background:none; border:none; cursor:pointer; padding:12px 0 0; display:block; }
+
+  /* ---------- skills ---------- */
+  .skill-group{ margin-bottom:22px; }
+  .skill-group:last-child{ margin-bottom:0; }
+  .skill-group .label{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; display:block; margin-bottom:10px; }
+  .skill-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+  .skill-chips .chip{ color:var(--text-dim); }
+
+  /* ---------- contact ---------- */
+  footer{ padding:100px 0 160px; }
+  footer h2.big{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(36px,7vw,64px);
+    letter-spacing:-.02em; margin:0 0 28px; text-wrap:balance;
+  }
+  .contact-links{ display:flex; flex-wrap:wrap; gap:16px 28px; margin-bottom:28px; }
+  .contact-links a{ font-family:var(--font-mono); font-size:14px; color:var(--text); border-bottom:1px solid var(--line); padding-bottom:2px; }
+  .contact-links a:hover{ color:var(--accent); border-color:var(--accent); text-decoration:none; }
+  .copy-btn{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-dim); background:transparent; border:1px solid var(--line);
+    border-radius:3px; padding:3px 9px; cursor:pointer; margin-left:10px; transition:color .15s ease, border-color .15s ease;
+  }
+  .copy-btn:hover{ color:var(--accent); border-color:var(--accent-dim); }
+  .copy-btn.done{ color:var(--accent); border-color:var(--accent); }
+  .foot-note{ font-size:12.5px; color:var(--text-faint); }
+</style>
 </head>
-
-<a href="#top" class="btn backTop" aria-label="Back to top">↑</a>
-
 <body>
-<div id="top"></div>
-<header id="top">
-  <div class="container nav-inner">
-    <a class="brand" href="#top" aria-label="Home">
-      <div class="logo"></div>
-      <div>
-        <div style="font-size:14px">Atharva Gajbe</div>
-        <div style="font-size:12px;color:var(--muted)">Cybersecurity • Blockchain</div>
-      </div>
-    </a>
 
-    <button class="navToggle" aria-label="Menu" aria-expanded="false" type="button">
-      <span></span><span></span><span></span>
-    </button>
+<canvas id="bgcanvas" aria-hidden="true"></canvas>
 
-    <nav class="nav-links" data-nav-links aria-label="Primary">
-      <a href="#projects">Projects</a>
-      <a href="#experience">Experience</a>
-      <a href="#contact">Contact</a>
-    </nav>
+<div class="curtain" id="curtain">
+  <div class="curtain-text"><span data-i18n="curtain_text">ESTABLISHING SECURE SESSION</span><span class="cursor-blink"></span></div>
+</div>
 
-    <button class="btn" id="themeBtn" type="button" aria-label="Toggle theme">🌙</button>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+
+<div class="scrollbar" id="scrollbar"></div>
+<div class="id-badge" aria-hidden="true">AG</div>
+
+<div class="topbar-right">
+  <div class="lang-switch">
+    <select id="langSelect" aria-label="Language">
+      <option value="en">EN</option>
+      <option value="de">DE</option>
+      <option value="fr">FR</option>
+      <option value="es">ES</option>
+      <option value="hi">HI</option>
+    </select>
   </div>
-</header>
+  <div class="status-pill"><span class="dot"></span> <span data-i18n="status_available">Available for work</span></div>
+</div>
 
-<main class="container">
+<nav class="pillnav" id="pillNav">
+  <span class="pill-indicator" id="pillIndicator"></span>
+  <a href="#top" class="active" data-i18n="nav_about">About</a>
+  <a href="#experience" data-i18n="nav_experience">Experience</a>
+  <a href="#capabilities" data-i18n="nav_capabilities">Capabilities</a>
+  <a href="#projects" data-i18n="nav_projects">Projects</a>
+  <a href="#research" data-i18n="nav_research">Research</a>
+  <a href="#contact" data-i18n="nav_contact">Contact</a>
+</nav>
 
-  <!-- HERO -->
-  <section class="reveal">
-    <div class="grid-hero">
-      <div class="card">
-        <h1>Hi, I’m <span style="color:var(--brand)">Atharva</span>.</h1>
-        <p class="subtitle">
-          Cybersecurity & blockchain-focused engineer working on malware detection,
-          secure systems, and real-world threat mitigation.
-        </p>
+<section class="hero" id="top">
+  <div class="hero-photo-bg"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCAGQAZADASIAAhEBAxEB/8QAHQAAAQUBAQEBAAAAAAAAAAAAAwIEBQYHAQAICf/EABoBAAMBAQEBAAAAAAAAAAAAAAECAwAEBQb/2gAMAwEAAhADEAAAAZ/vPepwObXU7dN15FsGQo5blT7reKO846TshGykaxMLOwtZNJqImjpVXFwq+moaZ5+g3fJm6vRNPO0b2UP8NJ98uAJ+qvfP+pjWxo+Z7Uup3Cp9/ChJeUR9OwU5Ki2rgCUaJJxk4ZBgyeLSCFHlFUMnrAiP6ojoq11a0yo5yDYciShbvTb5ScaN42rKUloSdnSOh5yEZGU7CTTrLKQeFnsrXMLh0brhVEmlaUksxd7aFS4WABvXqVwCWirNEnar9F/n9q+30LUrFXe7i5wnaTdTkNNTp4DkE6NfL6w8QfVPR8TsJYuspI19H7MjMHroez1uzyo6yXW8mSjjRM50khjHysXeJ5+szqlcBOQezWVjJR5zLas4dzdC4Cti5+mfnKioGUZtnqPFtZmHxUtsNlmLlnbgrcK46LtL7V8xSNpfTyoKf7eM81ESyMtudpOgitCsp+C4CQYxbKQIbK6jzNsYp02cUm+tlRtcayWUavlMqp0vNdMIbRMtE2iKVh3dJycTIx6sIR6oVqWTvobh723m915+iGsdhsXL21Cesz3m6qFDayZ0xSM+h2by+bGe35/WELJtI3p5iS9bsbztu2/Jv0p181hl4eYrJQDNEZC2y2DlbcqHgFt2yGh2jKJIlPNs7YPcHlnq9njaTyvVcsjVvp+Xai2HGS8fScV101vF+1KJcvJ9c+d51zjqC8PdJaXUdC8/0zSY5Xl7OuVqR0k6VgYDpwyVir6DD7ZfV9iqfRy5CZy37/MVumC7F0Q2GWhZfq5TBU1R0kZLZXfmiQzoQRkEYkbMoPJ8yN3gHux7NXLFKsllmp5ZGrXUsq1U5bGQZOjNnIsLRXz3Crj5a+mvkbm6Y8zd5xdl/utclPP9WzTlMm4dFi5GnV5JceQ6VfwS3nIwZPDQ1NvVWZckgJSN9Txw6vk2hdHP9ASkW77ON2EQFchWbjAvOdUjEYRzYBxOsZwwHQj6LkcHdirNkjSWyrVssjdhrGUa0cpjKMCrOMmoq8UeX1kT8qfWXznz9GZ6RLV7g9CdVDt+lrIamNuvn1R/l2ieN6Mm4Az5ugtahoD0+C0vKZIwe+SWcTEL17PfqP5rpyh0nLrr2cf0a4Qnv4CISLMUzMwzxQDI/ELQM1bOm9FaJQlkbv4964fWar2WNJrLtPy/nux1vItcYOo9/Fbdi30dfnX7nCrjMNSocOvC7dE37zPVoorkDp1SFYk9sIq1lkvH65CuaXR+Prz5xolb+o8imps0n5V88tFqccvTF4f9LfPejGy0nofbw6eF0z9LzVc6Q4C1+U+OI4ZAHIdmg3AiGHvcdGb2LeMkhaKdZp0tGY6JnXN0MddyLX8TRUtFkNI2QiujmLznGV5FyRIdOA6JCSng/QlcB9Lp6BvBurq4xXYW0mjGLtFz1f7acm6dmUBjpYCaFyDZcyrNFvYz/o8Ur5ffX+f70ylZvxx4M2UfgwEGQcBJh7MElGyRDpg6rCTlK8dXuNPkIHn6O6/jeww6HcVJxrIyiJuD6eZaxkZHjkBpWojRu08P6CacRY+H0PNQRlUjEcdV5xinG4awOCu49DuVqTtHsQIAjRkqrIBotc0WAsX0Pzg1+90crnyxq3Oo6N3qfbeEQW3PcUQzCZswh3cLJV5VlalzyLBw3h0I2HHtd5+mQYu2AAoOagejnMRoR5yZxOoXzulbDh3nenYAs5Dz/SpCXD7o5zTkNNT7nbFwwBasWzF+Oz2im23nu1axIqSmLFmtL6eb6BlJCa9jx6v2w9adfHaShqkq68U04lsODS0XdO1JTcAsKQibhaTqUmB5XnE6ZO8XTJ00j0D1zI9fh0HaOo3A0LMMqzZdmD5W8mAsbPPnbf6lG+Ky9NLwd1tns4tkry9dtUdLpbTDWXD8jnlO05RFZ7WPhRLe/MuetWh+h59p9X/XhKphRMtokaPYJUnWoolWll17xFgDBgIsAIfrDldscFSdPdx7ro5eO2EhsYZ28Ojuy4nq/P1T0O6EMljIw1JyTuvvwXbTrfbo/ApOg459M4Hw9sda6PMxtfpjO5Tl7dAZUpklJmoSFW6eIjeNRaLy3tvpthTOwlJ7uTX3ke/pDqTJBaWGBndpSFmoSNRjcjOYtyNWQ5gOCSRDqOZKY8fO6TgJKQ4ygaSsbGsfpeY6WlJhuUM6uId/EUkF/BkpOxIavY1EzfxlJucruFW831KPAaDDc/RUnZ2NYcIBZCWso/xidNtep0m0ljZRRMQYsCdcd8vfy9s+S8tWUbpyc7nk8y6HXZuE5ekAostopbsGtEtDuKMjDiJCJosYWPCFsLmFnsX0NZ68laxpWba8ct1N2DlvQonWakNWQ3LoaqSpqhRLXjsVlVNt1vgtD57fOZ9PyDz/AEnMfIDlWK5KaRWNE2ewSfdwCdkSyNPkHVMQunlc7VDv2Dptf5nJ5B5X+ZqVv3PcaxocBx3p0qGIor1u37WVnVH8V1sRAcS49d9x9eVc0OuVmwgrRWjqxo+a6PRZmcq6JHQ6/RqcKbDUsGhS94qLV3RDVuXhkb6kvtKu3NZNRmsI2E8rVhj0bZaIa005wGKnAdVs/wA2OM1DxXXL3fKOI6C7bNDj7tISkIei6XpXzgaNPonNIKypI72/SkxmoNAQRlgdTqVUnA04K1ssPEidbhG8jF0Lb8RG7atTaoIM7ahQD5HBqZcLVbDwPWOT/RLyNyCL1CFk4/rh0zhF0dfTPyQnkr+gPMz0nlvVPkDUcu6Zd73lUSYaNpBnGPgSvhFoDGbHZTLH1sczXu0ze8tQN9AkwOdmNQg6vKicYo3SQEUPCXxWyUFKveA6tDpF4hfRL28lKtlGCvZvq+T/AEBJnELfzI+FUrYcg6ovIt2wog9Rltp4757PaJ87Kcv8gnVLqe8OUThtu+WNstaFlelQs4vBqOP0PNu8YnBMyGzXTGiZRZwl28sGVI/RGGfxnUx6T+50jvve2933jkqSTbvfI2L9OYB9Qwf3X8UjYxkEpXuqUvaa7obr9ATDeR4OmL+NtnxXpkryuWRHed2Q9CTbzcMictfvMqlI5iryU7ED5upctSMhiEZO9m7yQhtteA9RJU0q+5Uj1hSFkrVxTjvve2VxPjuqQoYoihO0n6Lxjbuei/nzcfjp15HSjfqk/s0A+ov1wfmT+Z1Yg1EbtjznUHeWgoymThvs7cII4X3nNu84kZYVIxGtucbgDjGGF2fYMk0bsNCNOzXMatj30f8ANGZoYRdi9T1x3nvbc7z23VIXsoa0bfQ+s0C/81ci+fb9QOqJ/DeXR67Zyzr9a/Ie6fN/F0F91F04n3hulSw29KNnWxCi84IhPgVI6jbqOAGSVq5XBCZYLQjke3pBkdh9aTqO+feu/HX1T8p2QRQlcGV7rqniuHI77i5SxqO71KtvrGyQDDnr8vNfK7IEdt3FUc2ipz+LqqBNGnk9Gw8sfRhtzzlFbSTWrVW3MQzmMIryYMpPkgpjncbMyCxiOdpZoGkOs3JyzBcMu5MMqQJWvLJ+DSwF+TN3SkKovedSd5CkDK9zoyiJUd9b55oWHyfMVoL0yKduWimAlSkhEeVvc9w73QpYOY2Plhh884Ol4RjJ4OuNiqTgRxSBvzsmOL3W3DKXgNShnd5zg1hdys1SFCrN7o0ro8js3d+52iLT7rZKVoG9xXBi9T476v8Am/efmZGGtC7TKQCnCyiOjK4n23UKZAtQvjKY2QckYMFuUbc4ru3ecGd0JWi5u5Zvptxx1VFUPwxu+6o4flqG0iegrBTnotHvdIj0M0uxTcvS+oo1LUQMbhOwOLVslZCna1h9/oiHpOlqo/F6Qpa1BheWrZqzO6UoITjrxfl7CQdIIEOkbNxOUKQsnrRS2lWbwZI1uHAHZOkJZmaAmOzMN//EAC8QAAEDAwMEAgEEAgMBAQAAAAEAAgMEBRESEyEGEDEyFCIgFSMzQQckJTA0Qhb/2gAIAQEAAQUCx2jPNIqv1unvbVGEQm+YlhVATl/dOmBFQJn/AGSq4BY57U6Yino9gsLCwiFhOTvPaMc0nirH1uvvbFGnpqgX9Tp6/uBNRUCZ2c9rFUXSmplUdUubVnrUQqs6odPb5rzX0bW9aX+FUH+UNBtXVVsvHaVXDx3p01ZTij2BWVqRciUCnp3lBM80niq9Lt72sJjeJG8gKBDxMFI1Y5pxwFhQLWI23W+w0dLX3ipuEUc+WVF2+S6pr4PjVF9klbRXDS6pd+ovfTDSJ2tf01/kaS3iCthuFNcUT3pymns8LC0rStKwiEQmp6f5wsJipPFT6Xb3tQTG8TBBRKPxOFKv7g8MWFJWw0Lb7fKq5V9VXGlfA8villd8aaTYfX1QdWuk4Y8ARymsm/UTcA+D5K2HF3RvUsthnq6qKri704TezytSBWVqWpEouQKJTvOUCmKk8VPpdva0qJv1mb2iKidxMpPKhUXi4VrLfS3LqKavq4rluuueHSUld/ryTiVZJdKcyB2TK7UnS/SEbzqisdWxVUTWsDXZtF4mt0lHXQ10WFhQ+Wop/YfgUVlE8PPLHIKNU3io9Lt7WgqH1n7Ndgwv4lcpDznmEq735tsp7j1HNWUckn29Sx+Qx5gOr9yKE4ngWgxnBTfqt9GslcqNsZfP6u1Kgmkp5rTVvq6ZRHlrkSpCsoFZK5XKOUc9tS8lqBUR5pPE/pd/NoUPrP3gdw8p/nhXCrNHRXCSN1oqHB5Lk37Kngky237iitHEVr+klowZ7MS79Fc2N9ne1TUL2prC00v1dVztXlUkX06a6gc2uUXlvZ/Yfg4pxCJTnJhTUFF5ozxP6Xf2tPmH1nCwnKA9njnQuopjDSXCv+S7RxjL6KgwynpdIhgwGRoMW2m0zXL47VNRxqstzVV23Dnwua1+QsZMtTiCFp1WWs+fb4vLe0i5QygFhEItTmpwTlEmBYUfmkU/pd/a1eYPWdFqkCiKyneQF11VaWlywXC2Uu5JTQYEcajamtQWFG/7ZTgqiLKqaTKmoua6i0rWYnbuU3z0ZqZQRnlvZ/YFalrCLkXpzk4p6jTEFGqNTel382r2p/WYcYUjU3g5RKaV1jO2eZrV7K0tULVG1RsW2g3nBTY0wZRiypYFNCn03FxhAZPD+4vB6PmwYimlEqQlcoZWCtJRCITgiE44UZTE0KNUim9Lv5tPtB6y+ApF/fZpwupS03Tyc5daIsMibxEMKIZGEFhMQGkgAiRimjTmq7Nw2oaHJwwV0mz92P2CynOWUCsrUiUXJzk4qVRFNCaExUqm9Lv5tHvT+svgKQL++0rdyGvP7/gUce5NRgQxNrgo6wKKs5FSChJlCVbq3l8vC/UGp1VG5TjIrmbsddqglc7UPZdHTf77Tg60XpywmhaVoRYjGnMWlStUYTU1MVIpfS8e1o96YfWUcBSI+VhAK+04guvs6koqa2OddzGv1utX67Vpt+jKpqujqj8l9PL8vDhKZVUXCnpw/qJrS7qV6i6lKpuoonGaeCddQUpaQ/SWty7o+NguQ5KyjIhKhKtxbiL1rT3IvTyo0xyamnmkUvrd/Np96YfWQLCeE72WUF1wwMu3R0Vj+PBl4w1qdVtavkvkc2V7zSP1yOrYaaIVkL211bGaWsqgQ6QJlXE1MnhkWkKjdyenY+oKC40L6KpjJVgk2avH11Lyi1BiDUGrSiOzwiFLwok3KYmeaRSet482f3pfWRZUiJ5KytS6stjKtlmhMN9+KI430m4obe1pmt7ZFHD8dU1G+SonjFXcXUMggixNTyUrnOEO5TSW2pLKi3HRE2WNUgcVc43Ckqap9RUgbRsmqW6wginKytS1rWg9B5Rei8pzytSkUKa5NcmFUak9LyrP70vrL4/t6PnszldSUeKejiDrrX0374o1JSYT6VR0fMMJpGWymEKAwyphNPXT25sgqaF7QyOcJtLI9MtowyiDFURalNSgVVPb45B0PaWwxOcigtK0BaewwjhHCOEVKoSmOQKY5UZUh+l5Vm/kpfWXwVIi7kuWpMKu8PyKKgj/AOXaWFgiY5Npso20lSMgpm7rq2W3whNijNPWM+1BUtDX0Iev0zmOh218fIkhw+RmmOGlbNc9r/d6dzHbtRPbC5XK5XKyVyuVysKUKFMK1JhVG9Of9bwVZ/ek9ZfClRPOVlMcnDcYaT4908psbU6mGJItIkiD5HOjZFSVoYjdeI52TG4xNAopnBRgvRDmJqk4dNyy3sJu9U1tOLZHs03CBQ7ZXCyFkIuRctSLlIovLEEwqGTSt/Lbq7ItB/cpPWXwVKj5QTBw1Xn9u4hDyX8SuJUkeWzslMtOJolI6cmCesidBv1bS0xOgnOG1JT6hSSZMh0x2vQ51cTcby0YBymoZXK5WCsFaUWLC0rQpBhRlB3OUJFuqOb63B2RaD+5SH6y+MKUcP8AKATUF1FL/uxTa1uKSXCNW1qfcTqfK6R0LTGncqOMxS09a1qM0U7WP0oVH1bMXJs/0raj9uxM1wWuDYYHrUg5a0ZAtxbi3VuoyrcW4talKYmnn+s8kqJ3Fby20fyUh+sngKXw/wA4QCYE0Lquja1scpzDNkV7yIZJVSHW9hiaoaiF5knpmh0kRZK9sQjrCwU1WZZD4fOGNM6qKj6Wevp4KKGQVlRz35WCgwrQUIsrZWytlbKMakGFGo3854R8Qqs9LQf3KT1lPCl8P860HqPkNCvtJ8q2MJKgdpfWNBg+G6Z7bJlsdu2lFao5WixtVTawpLVVI0ksSoo8ve7DJn/Zji4z1OI/tKbPbmuoTbwF8EL4gC+KCmUQXwGr4QQpGr4jV8RqNKE6mC2AqyLCbwY28/01f1EFW+lo/kpT9ZXIFPUg52+BGVCDhjFoBbfKQ2u4tk5nnGzSyDVnCkd9X3LQorgVDMHt9hLG1yi0Zq5wIpH/AG3uKiUMHSlnfXPjmbDG6qCNUEKoJtSEyUFGUJ1UAm1YK+WjVhfMRql8lVUmR/8ATQj4zzniJyrPS0fy0rPrMzgO5KcMljMrbTRhB+FvBdR29t2o45HMe+oOiKZzXUlUHE04LX2zUYraQhT7TXTBgra4tdHUnVVVGpjZ+TMrN0xFV0sTG0zNZXKOVnC3eYH5BHEiB5e4oPRfzrTDlTDgs5a9auA7nPEJVX6WX+WkOWyjjb5LcJxwopFrynvTnouWV1PZWujMxUL3SKklEShriQydCcFGsCraoyGWRSzlrp6klxlXTVlfea7rLVa4KevbVwNlymuRRblaeaYcO8SoBScLKLudSicpTwUF/TfI8RBVXpajiSkkwHSZWpOPE7tKhlTZEXZTiiiVUDeprjSaXRS7KgqVvhpZVnH6gQvma5JqgAVU2sBxzguNl6bmuctrtkVtpv8AI1wG109XbTo4XJrCtsojHam5Dh9ZPLFN4TvIamMU/AjOUIjnZ4bCct4EaqfW3fy0jj2LjnUcVZ4iemSLWnFFye9R/dlTGJFPQ6k5joHfJcHfqRCfXOkIrcKSrMq0lxjgL1YuljUKko2U8bntp4r3cjdbpDJoPTt4bVRZWVI5F4zSv4MZLKhpa7XhSScGXC3uWOyg4YqTlRuw7TghuQI0WgKNgKrGYbbj+7SuWpOPLnqp+wB0oScxfZbJKdTuKnj229LV5ubr1E6gry3UJoNSkownUZC+MhTr4ypaR9RJZOlRAoYAwNbhdfXn4tEm8KnqHQPtPUDaxhqMKaqKdUK21v2E+WVdSMfKy57+Jn4UcnMZ41KY8D2fLyydNlQ+6ih+tezDaD+akYSvjvKbSPcpKF4D6UlMtgIfa9KipyE1nBHHWd7ZBTf4+Zi0Xi1sudKC+nld9k4Ap8bVoC0K2WGa4OtlmhoWRxINwqmobSw3q5Ou1x7BQyGN1L1A5OqGztxlW+P7tJY2rn0StmBcJhiZ+VHjVG4Ye5Sv4by6VNKiyoAmetw9bf8Az0OMR4UDBpkjaRURhkjQCHNGCNKufU9JblWdW1VWq+cyv6Gj27AWq/WEXBmp0EmcohMhfM+1dK6VDStjDIljCyuvb7n8GpqJ+1PUuYaevDlbJA6aOjD2V1oyZaHQi7Sc5TfZp4e/Cll4jen2pzkLO9fpj2ARuYWO4rnZbRcTUtQWgXBwNNeNKdcdTZpy97qvYFw6zpqYXTqqsr1qL09+lkz8npMaLM0ItV66fhubKuhmtr7bb5bm+1WWG3RtjQYgEVfbm210E076qbuE1PP3YmvUVS5qtvVNRSKl6jpK9tVGC2qjdvw0byBQOXxnKWmeVLSyJkbo1tMW21VAClDUxoVxGFSfzUg+pby7DRNe6ekFd1k/FXdJ6pzpSmN1IKV2Q77Hpxum3tV0u1PaYLt11WVTqTqWqhVJ1xJSyWW80l6pw3u44XXd4+XXIdgmhNCl/kaggg5CQhUt7qaZUl6ikkoDT1THUrQHQjO0FNE3TVMATrmWo3fCnu+ofNJNPUam13LadwbOLzTUgq+rAqy+T1KfOSnPRchjVkJz1IeKaPcqLGNNLdrvFaaa6XGe51Sa3KDVR181tn6X6xp76zt1DdG2m3PkdNKO4CB0h9c1iie+VBBDsEEHKCskp3UXWFQwR3+GoTrlhSXcKaq3VK5auHOWVQctv9wbQwfMc9GdGTKLkSi7s5mpakFIVYKTefQTCCmutU+9V1fCaap/treHnCkfzSulbU9MdUfNjc5deXf5twx3wnOcxv7s6jpmsQ7BNQ4QK89uU5+lRSuUV2dGGVzZ008Pke9N1Ya0rwoqplHSXK4SXCo1LUtS1LKxleFlBBPXS9P/AK1XrdRR2/aXU9PpLPJOkSPTY3Svs1i0Mp+nZHurb3LZ7e+QzSd/KCEYK0FvbCHCHbPK/p0oY1g4fKjNyyoINBUfJhKb2JV+rTt5+2VlZ7547BHx7Gw0uihoaYMEsAK6spv9CPzKVp1v6d6Y1Clt8dM0Rhjev7mJ60DvlBBq8KSfCCCHfKyieGfuuc9OKzyCrNU7VQUPBKccNrZ96dn5f12AT1Rx7tXbYdFNAzCmjwusbk0qU7Re1+npS3/OuVLTiFsbdbrtXMt1DNM+qm7kZXLU3lSPEbYWlxwgs857kqR/A+ge5ZTo8g5aqeTDnHA1rkq5y7FG8pvj8f6x2Ccum6f5F0giw2Nivday20E87qmZ51yM+8PQLwy9uKaNtn+RLvkN7Y7DntnC/wDRIB+JRKJQ+z3nCcUXYUFThaGTNc0wyPaU1hQjK6ilwZPDf+oroen11UbeAuv7x8isx9HMwqYftdPSfGvFM3cdW1DaeG4VjrlXjj8G9p5CVEzQ3t4WexPZzsCPhruUWZW1lbBzCHMTw2paX5Qctavsu5XP8N/E9x36DhxTtGBcaxtuoZ5nVM//AMu+zoxhtOdEtINum/yDdtmhaPwHaV+02nZ2A/HPaQ5d4Rcta3UJQtwJxIQe5Ne7OSG1Uhllf4b/ANARR8dDRYtwX+Qq/aoQieI28tUA1TOcI4r5cjd7r47+UFlZ+RKAh+OUUSmnVIXJzllcodosPDKEvUFlJVxtfx7e48v8M/6neOkotu1eB1tXfKvaamjkK2M3Lj1tdvg2to/AIBVEmXRM0DtlZWVntlPdgQ+CtKDEW4WEEzzBRBqjhAXVBENhcnpnj/pcun26LXUSiKGqmNTUpqamldNM3b51Zcv1G8BFE9gppdtsEagppJEaaNg2Q5PBas9j2KlcmcNytWFuLVlYysFAciRrV8hoXW1WP/z7jy7xH6/hhf12/t6sv/g6tqvi2Ps1BZyrVXfp5HPY9y7SmU5mfAIolNXaFJUPlfQU73O343p7dJHbKe7gnVITgalqWUHch63E14y/qFP6hKvl2dWUhCKj8fiO7fMitH/h/wAh1emjKah2Jwskocfi1mt1RVinbBkqZ2RRQGolqqxtPHC4hR1DTFrARKcU88RcucV5QQCx3a77fIcjISpnfRyPiLx+P99m+ZFaT/x/X1Tu3ZDtlE5Q/Fzk6fbZ7GMaWZEjxUtpImtdM4s+rQGNBTfBKkKiH1QCDe+ew9mRFybTEqui2m55Ki/L++zfMisr9Vr6kqPlXsdgsoIfgeFvZLna0yNy0Et+OEGNb3AR4Q4a4p5TeGhAY7ZWe49oIVHAuoBtmULKZ5/E92eZVYZx+hzSbsvYLKb+M7tRETUG4Q7HtjtlOKKKPLgE3tlYQaiMdgOaZMXU3v5BCZ7fiUD2YpAqGs2ej8oFee3lN/CR+hsTcoD8MdiVye3GXFOKZy8LWtSamtR4RcgUCqaJ6ZG9dQxvdNsyJ0MiMMi2ZFsyLZkQhkW1IjDIhDItmRMhfmSGTGuQdKbEiEEiEMi2ZE2CRCGRbT1tSLZkT4pJZGwPWzItp625VszFfHetlyMUi2pEYZFsyJ0UidFIooJMmORCCUptK9CBwW08KRshW1ItuRNjkz//xAAlEQACAQMEAwADAQEAAAAAAAAAAQIDEBESICExEzBBBCIyBVH/2gAIAQMBAT8BIkrokRtG+bsn3aN1tj2SMDESF3aN8GLz7tHc7RJESXZEkIjHN4oa2Shkxhi9ECRAn2LskIgsIhDUQoIVGKHSR4kTo4GsWqR+i2u8SRAl2PgZT7tRjwJbHyVID7KvQtrvHskQJErUuxcsjiPYpozZoTwT5RLsqfyL0RJECXZK1LsgTeO2eXnCZSqSKlSUUOpJ/Rc/SLkuCt2T/k6M749kiBIlajHXNRIwxJolSyeDnKRQpPOStDXHCFDnDFQiuiNNorR6KsHTXI9320RkCXZK1GeiakJfszQODIxUeBRwOnzlHJh/RrVNH+m0nGK9GRMTyUyfZMQihlLEhMlVia+TVhimh4dov9z8io6tRt+lEOiBIlZI/Hk32J5iRi2QgSiSTKedI5nm0PJPMnk0s0M0M0GlmkZgRAgS7GjQRIy0sVTgp1Pg9XwTf0nNI8nA5FSfODUahSGzJm0rIgQGskuBMdqabjki8EahKoTkZYyoLNl2M+GbM0DiRQrSEzsaZ+LwsMnS/wCGmSMSND+jeOh26HITRJLBkyZGNmciERjklTweJYMaTOojwU6imuTSTah2Sm5WbvKGRxaPHPBhx7MmbeI0YMWTcTyOQpMYratIvyeBvVzZ8bozcSp+4qY4GnBqd9Ji+BWdo8Wfp5HeC+7laQhIfHrkrYzvVv6Yu7N+vs0nG9EhH0ftx6ESt9H7nv8Al13sbOWZ9GWR3vq62NYPhjBjHoh1vfse1kOt79j2/wD/xAAnEQACAgEEAQQDAAMAAAAAAAAAAQIREAMSITEgBBMwQSIyURRCYf/aAAgBAgEBPwEmRy+xDxPFFFYRDrEvgmRGxEiI+sSzZeEQ6xLyWJkSRHokiIyTovDYmXmGptLsl8EyJIj0MQybtkpbSWqx6jFqM9xkdWxO8aUr4H4Lwn0RJEOs6j4xqvkb8E6ISEaX7D+CREkRI41eh8Ek2ODKwhoj2R6NP9h4flMiTIkcavQ+TShGXSH6ZVzE19KMTTgpyo/x1FdDVf6kkmaT+jT/AG+GYiZEWNV1Fs3mnrVwe/xyz1eqpdGjP25qRqSi9PemP1Eqpk9RM0X2aTUmL4J9CJkBY1I7otEme4LUJOxuz3Xt2ssciHEWehV2/hoao1CHRHDNem7Q0RgyirHEWK/E0ILTgkvikTIkcNmvH+FUxySOGUhUT7FEWluRFpKjcjcjejejebi8yJEehG8fJKO5DhyTgJob/hGLZs5FE04cWbTaOJRRRwLMiXIuCPJJCxqUpUSQ4CgQRQkaXQ8PrNYRuNxJj6xEaOi0ep5dkdQ3RZ+JuX0KL+xc8C4GrEiXQpOxZXg+iU6I6tnuuzmQo0rHyakHF2WRTkRio4hGsoZ7kUJp9ZR7gpXj6HFSFo7T20ImM27h+mK28YirfimT0YTI6TgOTQpClZsRRQsXiyWI9FGrTxBUs2314un2e2voqsyL8ZY0yTJMjyL4LG/iZ9j/ABRNcXjTj4Lny4Z0WLvzl2aat2SQ1+IlbFn/AJ50jo3IXm+yCpCH0QX3l8CXw0yPC8+3hEuhcZWnfLHsgbU1Y8N4svFIl5x/bLeY/wBFJzdnF2zfudjdjPvyl5xF4N0ci4KyxeUu/NCHizt4svLZHLZZ/8QAQhAAAQIDBAgDBgUBBQkAAAAAAQACAxEhBBASMSAiMDJBUWGRE0BxIzNCUmKBUHKhscFTFSRDktEFFDRjgoPh8PH/2gAIAQEABj8C0D5w/g+s4D1WvE7KD4cP+7O338kS+GTxA6JrrK0wHxBvRfhU/wC0Y0R764QJ/wDxCbhh/wCY0LDbrOD9cIqUC0jH8j6G8+XO2JcZAcUHQ4jXufuyKc2PEc7By/8Aeis+OJMOkDX1Vls7Rha90z+UCaZFfIRI2435G8P0TmigJoDwVdd5PFFxtGGB/UyDvyj+SsUFrnw/6hyVN4cQm2e2+3g8HfE1Nj2d4iQ3ZEeYO1Do0QMB5qIMeCAyjWNKfZ+DXCXVSFYhL2fz/KgMyLWuTMLpu8D95IcWQWYV9TlrbqxxKQG8OCbCiDwbHn1UR1ngEWVuTjQLMH0C8OMXPskTMfL1XiQnh7TxHlyhs3xn5N4BOe91DCk0ckyZrxTYodMGicTmSHehFD+ihnJzXEO+6d6AIm7CF4Y3UPFPshw5psNow2aH8LaNH+qDWcs5SR1+yGEue34m8Cg+G7Phy/AXeHrxZGXKaaHvDnz15cEOimnNOTlTe4o0o5TOSOhVSBkP0U4pfHPImQWHIcGsyW9JNdDi4XcJKcQSiNofKnZRHsljlSfBQ4mATGamyQ6LWopIEZKcs1kiOC5qfRUE+qyvE3dlqNP3WQCMb4G5leBG3IpoeR8qdk+e5IOP+YJwbkTNVUghSulkt1ZI0WSymqXCC2jGVf1KGFpLvmmobzV41XevnoUEU5qpXIKZQ0iNKioFrdit7D1CdidixO88505u8Uj0AopropbUor+FOq8MfLNw/byh2Vpwum3xCbgOG0N/W/xw6rnNh4eklTyZ2L2ihIknA7wofW+ZoAtVZ6WazUprNTbkiEQprqoUPjMu/Tyh2VrblKIVIVKdDiA2i0DerJrTyUodngiXNs1q+EP+01a7IL/WEF7WxQz1YS1ezjRLM7lE1m90YUUScP1uMjIDNxyCNYsU9NULVszf+t5K/wCGg9lrWWCfsVrWXB+SIptcWz+ZEkSN3RPdOrWeUOyMmymJlOdbRit7XezbX7J0R2b3FymqIjDKXNHVyQGRVlbGsotMTDRznkUmp/2dD/zuTPBgeC3EcWtOZpduKrbqKRM0w+P4MQgtqJ5KJAdVzDnzumKOlRAjLyZ2QjtIbEZz4qyzOcQINUprFi1kZuNU4NO8mNGbjJFkOoZqA9AjgPBR4Dt8DGPUXPhYG14hBpcCz5U3wm4XAV6qvZBAw6OwTmF4kQzcc5rFNWYgZPCbiz8mdkX4zU5KG0fCZp0t12sPvdksyqBOtHxikP8AN/4Q5niqptpYPUIOHFao7LdmqtVWqgRbwAknNPMoQojSC7J3JPtT9Z2ItaOXkhcdk4clEKwxMhkRwWpEa79FuzW6vaxGs6CpQfhwwW0YFNGYqi3gvBinDLdK+bqLsluyVOCKiTE6lNpkh1JPlDsiFEPEjRHKaAoJLNZqaxhSxLeWX6qblNFWimqFjOeQTRw8+w/My6i6qS6qrjLoV7wvWq7CveYui9pqtHDQEl0ujy3i9Q7O2fgwN4jmqZefguHUKud/VOEsrmg8bsXBYTcZZXT4qqonkCpKOIDxCSSfLjYwo4zxSUlXNTCzTq0R+Ja4wohtSs8J6qU/us6hNHNSyRRnwR5KGC4B3FRI7JhhNOv4BGaKuAmLpG7kFxmpPB9VR5CmYrgpNiOK3tW5pOaF1VJNc2c8UlCph1dDJZX5XZLJZeUkojJShuqxAzWdSpEVumqKqnK4jipDgiuc7jPJY8OGEDPEU1gyFPwEy98yrCnB29yKFZqc8Kw5jmuimAqi7kuQKzkVndVNjWmpNQzosEMYWjgPwN1sgiTxvjncSqVWE91nQXVdOqdLJYYlChJUKom4p+A2rirFa7PqeG7wyBxCZFb8X4HEZzCOEKqA/VUmjVCs1i5L+F6LoqBASkzi5NhQmyA4qz2MHWJxleE46rvwOJ6IniphckEFyFxulwTYkUYWfugyG0NATnuMmgTJUa0HJx1fRBCC8+0GXXyp2hLjQK3xPgDg1qP9OL+6ostIMhsxuQi2jXfy4BSlcLGw+0jZ9G3hzTIhBj9WL+9+aqVRdVLyOSyUlrKmg6zQXTiOo4jgor/miotNHcCnQY2rEbdW7JZSUyMML5ipMbXne+I84WNEyVFtDsidUchoAihWGKMXVTY7yRuF+WiRj8R/ytR8P2LOl0L6iT+t3iQ9WO3Ip0KKMLxmDeGQ2lzjwCES1azvk4BSA0B/s+EesT/TSKoVrLO6d0tPJZaBvyUiL5veGjqiIZ8Z/TJEY8DPlapm+zN+m/FuRhk5SiinBwyUodG8XnILVGJ5zedGLHdwFBzKfFiGb3GZOkb6FAOPiM5FScfDfyKmKqgWV+SyVRpHQnNa0SZ5BSgDD1U4kQuumb5KGOl3iR3y5DiUW2WVmh883I+LK0z/AKiH93Hh8WNXiWd9eLDmNEWRh1IW967ShUg+Y5FTjNl1Xs3Ncsr8rs1noFVWs+Z5BeyZ9yqvMlnfXQb6poRiPOt8LeadFjumeA5aDY0CJ4cQIQnyhWsZs5+l8SOc8mjmU6I8zc4zJ0qaxRc6nLYB0N5aeiDY0oo58VqukeR0M9GX+I7ILETsy7kpmgCLz7ptGBFp9dFjoLiyIDMOHBNs9qMrQPj4OuFlYfZwc/XRoJqpptJ5LCdYdVyOk+K/JqMR5z4cto49EITM4mayUGJL6dANAmSgXDE8qe6ooj6xaPZu5pz3GbnGZPkcTr5qfEZ6LYANMztAEEVki75XC8AVQiPzKk1tedzLGzKFV/rsA0ZnYz4DRwk0dTQJTnbSG1Mbf/uTRM7zjyQk6qBnNaw3RNNHJdAo1ofuwxNPjRDN7zM6PMXTKxuzOwlzUhog8dB3M0R2jOiF0W0P+EUHMp8V9XOMyp3Fh/xIZAUhdCsDDnrxP42E/gbsZ8tCq1c9GHD++1e/le2xMdqQqu6nQssT65LEnxHmTGCZUa0vzeZ6eBuZQA2B060eNB/Sm1c/mbo0d2TGzT4rzNzjM6ENwzDgm+iZY2O149Xfl05oudvHYgaYIvmnO5natPO6HZgaxTM+g0WD6ghMyACjR/gJkz00/pGyJ05FZKoUd8smHbQfS6I0GbYQwDRsrOcRqMJplFj6g9OOngH32c9hlda3fRLbWf8AKnOOTRNRIpze6ejZeQdi/RRMJnChajf50uqmalZSHMqsSq1Hh3RVEvIZqOAamX77aB+UK0u4uGAffStEf42wyGep05mp5IgkFwVFmpzWB2sqbuiNjms0WT47UKB+UKzwfnfi7bXBD3uJU+N3ovDh/covKc13rok7AeRgfkCZC/ps/fadVNTUl4cOrjvOU1LJAZ3HZi8dbzs7OfoCtb/qwj7bMm7JSyXErLyAvhDbQXcoae/5jPZYO6yVPKC+F6bZ751EMjZTUzsMlntQt09lunsmDA7Lktx3Ze7d2Xu3dluO7Lcd2W47stx3Ze7d2W47stx3Zbjuy3HdluO7Iw8LpmJLLqtx3Zbjuy3HdluO7Lcd2W47stx3Zbjuy3HdlLA6Q6Lcd2W47stx3Ze6d2W6R9lUP7L3Tuyox3Zbjuy3HdluO7L3buy3HdluO7L3buy3HdluO7Lcd2W47stx3Zbjuy3HdkNR3Zf/xAAnEAACAgEEAQQCAwEAAAAAAAAAAREhMRBBUWFxgZGhwbHR4fDxIP/aAAgBAQABPyFIhQQQMUKS38izo3ad4HTSpJEHBaSWbBa/4jSCNII0WhcBk4GRrVlwXFIjE7Jj0HkLQ0BsTKIlCyUfyZlENbHsdQUMCBNSMGJYSkY6RtjSlkcqDKW6JJxG5JiueB5MjeAuPvY6expWC3gdWxaGfx7EI28gPwiCiWYXwyNWv/beSJFp6ZqyENIzKIejYkgFXRVpzaaBngYDAJYT3iSNNBo2xYonIh1ioC0OAtISVFpbbEqaJSIzmQsNn+xhYOaUfhECqi/VRNGXyUUhxT3ehMh0+rC/vJAtVmHy/PXO2wqEjPqC4Owm1b5XueYaHAyWOkuj7FeTFVMY2McrYc2UETpt50KZgPTWiapSIGRgMonvGLStTEZVoSS2yUkOBiEYw/lkLkMC0HklS+ZE4rxQ7n5G9TZ89U+HIyhpbXc/pkzis+Gn0FAnGJ28foav7EhrhO9TErj1FqG/zR9DSctSc2XL+v8ABqUkXn3ySCyTxHE9W3ARMKmD0aTIGYat3GhUnA2/4RmWkpiDIxCS58osJBmNyFkhx0nMolRYTntFZGyUQxEjcYdJCflQysryfDVfoW0jbE1n8w/AspSLwpU/yNUbtTNmoQ3FYkk/Yu+KtkKaIq7S3FPsTaXJQUrQeoefBCwfJ/RCVJNXKSJD03goZSW+fIXcYVjEQRMSUiKCEUhwQGSIrTbTQdEGzEJcWxA0WCD1gzrRQgTEJ/SDsOu1nBbYGfE7RChP0HQRpw1vyLU4RwmzQ5bDtFEOSyKssuIE4ldmaMpZG3El045IaCYTdPQVnzi5EXKkr/Q3JlEF4RAcXhYvpNU4fYhaFRZoykbBYMPUDbHQksju0VkFuKGSMRix7k3oktEQlIq/Jtg2JfuPJlm3l1Le7b2FGRjAugJNaUQhbTZoe04h7tKNi8q8Zyi8VJ2HLHgN7IzcB1GORraaKdCfYykMcKhdRYtzJV43DY+XhnkvHuXpcaSicQKIQPTRAUSUOBGooSZ6FswFAs+gxCSo6HpzOwarR5jntCeUqPkjPvjdLpGV28DZTGxLTkwvCKggXOINiCGIHNpTK8IWw1Li2yOisS7UCFNY9WSZh4YmvdmOcTFjYQq6QKEsh7lDtpwEZWhktCMNkTQPHDYIZMjsIkSIRbBMGUWw9TEJRIiEgJNCstaJuyaee1NIgbsfRKXCK4YQkkKVETRcJwOiZMhRZXgn7LMosVRwhsmFvomQ3o9AVOS8gM6QrYa286ZqEVJUiBobQkUJSFvQw9ljNFIM5mMYlNJhoKwTwMbHCd4/4iC8tthz4BdIrZEI0UyXI5CdYodkkERUyTvtiLoWsJ7HENbkkmiFLUR2slLRyRL0t8I7+gpuUUEAxoVhkgYNQ0fpJRL0MkbDNoHr5MWlgIKhNDYtBjUQjFiwbChNIWQ2EEeWLlIwInkhFCXCFJaSFhiGsnuCJcC2PCfsTCXgPZyhOLz0WJN8YR39EclOxYWRhRGRZEgJECSQY5hciRFKNpZtMwumkmgwxoexSaNbDaid/lCzMYperFx6Qyx+EmSUpVvgxpkTUzORSKClOxK/AgkQFkL6sSxES60JbZgSzROCoZHCVQWmU49KKfsWhoRkJMTSU6VqqAaacJV6GtGSM2hSFKGgQWhQxsxhAyDCQpWiRwkh9PYVfnhx6DJNngfcUCfgr9AkYDj6aH19yf4Z/SH6lr2PWU0pNmnwJUqSPqvNghGi6s95Y+JX+vUE+F7t/YvXoZ9ibJLkj2ciDpBftEKUpjI3gWn8S6j3je4oJUODEIROktZdNcmMxjY9FQvBn8Cm9PJUKxWKmUDcHgNWDCAmcsekktjg2lNF2TmuD8sssysSeCFU3m8CvtuiyaKGNUl2jFPChepLODZH2cMsmi9uvyztb2EUm+WRRNHMUYCEc8akiGWasqFNE88IayoqGEGqVtG7pUt7wJVkCkiNifSWKEgkhQKEJDB5FQZiOBijPpbesag9GQ1CyyY0EiWBv8HMJW0gOaS6uhu7MDHoG6zIkDTD1hd1WQIwEhXY6CtsoYn1abIkZ2Co10HfA/h/BYaXYyBcFUxQQrBibd2LoMkka7DRoaJbVzNhzb+xqYhJ9wiGlIbMROMC5WI2uBIZQekmG6JgkMDeBm/+DWoakOMh+cShkHKD0WLeiQIxSrNonlpz32lJK7M9H+mvQQtjK+BNmAzpXyxolsXLb+i/Ya0nMFNwZOoSfnWGI5q0rdD04+w8uDsxYtNm0ktEch4UFc6WhqTDJ1STblj2NLFkhAwSiSFTQUKhCB40JHo2Ir0TLQYDIZsaFqRSHlccjEIivoQ0N9k/ZGNDty+RqR9g8mfqiYJUsk/hISqaa7ty32zLnqdBaTU8iuCzl/DFKcJNrENbfDEJg2QMjaJWp7nd2itCpEJnjJpIJ/KsmCligNhaMaGW0tBuSapCZogSFvIkFfWYRQ3bGrQtIEmglipTViohpqvYcxQwoSH5KiYcuBNvNEIg4GEdVEKkoHN2mYZubg2jXkSRFvyXaaXVSEmLGxFYyeJItbJMVI0xyr5bFp9sobQRJFjggTqJAlDUQ9KoNY1ikSjkCHMqeR6jjIxHguyAgQIpmrl8jWhongKUEG8hrdk3H5pkYOUJ3FaT0SPl70iFk7x2EJ2kRDTliecCG29UD1exlO7km3KDAJE7xiASQmENIZiQHIjQME4wbjmY509g5BVWlPZkgndJR0lJ6CmsVQKJbLCQoFZqCsMSi2bnaikTVJncZJbgc2nYgjUbEOuzgdxpbFZamB9yQ1SeSgOEIlTSuzfYjdGVTuTZcpW7KLHPYuEiWkiNBIiIka6YsnHEsNooIUTi6VTzoDijMwkmy06R8iOmri8jEBHtsoGugekobuyXOCYIQ8ox4ILOxIqmYhSp+4eWk2Gmz/YY6ytMTzCJHHBPCmwx7wdkLOUnsxosbbJPAU8F7IdRu1EwTG5OCg0ccyfRpyxBiVYmtyNTQTY1xxJF2v3KPuEiyw+DzRQ+LL6JfOKTGNOSYqDJdiUevmfToZTauxKbvg0P5c+Bs2SPIqQ7W42V1LnwX9NfwZXLixN8SBcB4SmKiA4AlA3kLgHHjRFFgegZAO+hMqFqHpCILWNCRMo+jGhVpXWnk8Bd4FLCiabDRIWxN0NT6TGB5lhDyEY0lQlNwQyCmlIwrzogltqehcyHEvrSdhFumLatUo4Gl1UjLejEl27t+DFCpNLMwObErYRJiC0DZCGichRBzQh1E2FyhEihc9E9i4TGTNW2kadBUg1SwJURvErcTCL3RwIPaSuAa2wVZFa3d6TJzuGE2JiFqzcQiV4Q3V2HVp4Ec+oszlDTETylbET7njnKuZ8hIRqJBIskssnYJ82KCWQo4u0xyCQxrI9ZDaBjWIeJcY6RvpEg2R5YbfyIQImTwGqSpJ0JBCxjGLcb8my0TsxIpXGw5gnvgiMO/Ekype7bDG44klKnC5LLRYl0XuSqEuxNzchNZVv0QgW7h2Kj+30Snk7CNWH7GPhJjh6SQyIQ1CICHMmYkBx0jocgneQbZFMb5jFzPIttFeixjWx2JApHYiMiZJhcYERWky5FOrlu0PdpKe4p3XyJ6yXLNmFOEQUcCuSSF2RHJa3Kavgbjbe5eS32FdEzsTETXYQmNkbmxXCh8LC+zCbBOzGEJ1pOWxux4IHB95BiyWK95MiFDhKa0Oe8TmK7UPEl3HgQENudJbraWsQmJGSshWnisoqIKNomOgT7aZE+OV2Ksd3NEYBrLdiKjTMs2UxQJY8qnI29LJCqTpjZD8nUThaQ9pMpR9nsIFS4RhQhokZAW5CGcpyIMJCwgMmSILBeiKXRQCAzJEExIoGYuQexKArCEg2LVS2xgHV/STNhLF0Ez5CmuRs00KJROdhyd/gVJ/I8MzZIopsxBASAhSjvZ7H7HbLBs96U0NdSFfAeGt4GyFOGARM0oVgGtgkmh4lXQTTJw4gDoySbl2B9iSG+QmUErFGMmXSBglmQpFWmZkj0JZzpgOSmfCFDQ3xMQE2YvfsRJPyLhI6GjEiS2BGc4jPhCimt25kCFlUdkxsSzqE3YwhKRK9L42h5RVWThktkEz6OiNj7HkQWNlWBEk6YnbURsjiTcVCHgLJQXr0pmguhrlBg1hiZtwkSRF7xIrJ1Rl7jm258lzz8+OAhwkvN0xPhdgSTHTxkWQS4mVJ8nIowvBEUDRZOUdq42DyLAs6MsToiFIIEkh8i4oWKEsp9kWUMczO8RpCJNEsTvRqxsILkh86HojWi/uJAcypCZFCH5rAvyVByRHh7ho139InZZ0ZzmdACRaPgQ6+GTyLsGI/tBCNedR6cWxAIOYv8QIaTfMbkaKmLJQgB4GpkfKhuKKXMvB7jPAj3Q7BgtSxNmGJOzEVMcuMgXChr2QmTHgcTEoH+ZIgo3SBXpXYON55kbujNjzdjOAU8ExwLDycHUQcZF12fgQink7P0WJIlybHY2u8BJeBYRacfzrQiENEQ5NOG7/oSobZ5GJOpJbtEkPQ4yRjMHgUJ3z4nSfAR31qdlaQSwIXgsEhLGQMA4BseXNwHbhMmhSQ1fkCU1CMuusVIY3LU3g2ii6JHCIYkUiaHUyEEG1bjD7rX0rwiNFAh5bcrfp8j801uO4VjVGPWu2YHOJwbsYgnnSVZQ/j0hCmGwoPQ96NA0OxIsB8NoNlESoKVYgsKKCXRY5CVlFl9AiST/wBAntxt4GO5HaK0oJkcnHZKEpnsvpSeqaSSMGWySaTweTFM0kEpEaCNAk7GKH2EKtSFCBTEsvB9w/6FAS0fIeX+uQy5CMeWLSEmUG9T5Chk5E2IN3CLkxLgjuPT0k1sO+YxlmDHrwqfJaIeuAWA9JtoTYja7scxZ0NLZDEthVo9wtkR0nZEDwyxbTl9DQWMkderF5qK5WRZ7jeRsmMrPGN2LR0yAsMwdMeQhJD2IsH3KsUmcH0Og5N+g17p7EKoa8hLR2rEpltIJTMDCKGMChZ+hB20SSKDjyJaKiO0ZxCUU9L72HARtpC/GlyMTJMm4oal972FKRyZMbHjqKZbvhei/P8AwbJFTECO9BtRkUyRCTkndiLwstMlI6CKpol3HETKUNR/RoEodhkuRLR0iyqmje+f+sCdLhoR2IyrNic0Zg8iVbvghi75ZK0pG6IFSYosyiGxcg9DYuXsvcmce58iGKhSQ1KOP7B3lkfsY0o6+BQWh8BakUS9CRVd0IAQPIpD1tCI3GpqRyJYKo20c7OyKBVBab67DkISR5ZAGpQSKBkFMfiBDR7iY9j7CPwn5AgK/oQoyMWvkzi4XGz7MBRFj1C60Pxrt6WMmUMT02aPiKIgSXkokxdD+OBRTUWQ2SBAuTaRkEoTM6QOEtJgQsGTKN4ESiwO4m3dX0jL2R+2RsmNVOMnqmvs6qsE2238JD8XPhwtl7CQgZIxIQkOV3D4QnAFpkbgcIG1sbRhkwEr3E1KdpEPYkLgHyLQShUG8aOjotFpsYEHnQ8Dw9cCMxaj3siW17nyyBVSIdE6LBe53EUQMp2R/b/BESMbguIW0OgSqZEiVyNtkw5GNGNnYwnQQJEQkcGweMaJgJ22ykYfLGPYwEJwToxs20WWj2Sn8iSjZ+b4PschiiSQ7o72R8kZEg29kSjdAey0v36iQbHhm7TFegmm8ZgExJAzHYuxx8DCEdIVrzcciaJE3MOoRuQUhynwTMZtSHgmh41Q3EaaKeZitZVo3ky/l6WZEhdjcxG+ThLLtWX16kVjVSMeBNL5rCkpeplI2RTcchWHLoY4CAzctDdl8QJTUqtkUE+DfVR60NY1MwCX/DZNIQnBMsxRGFxGfwwzG6yw/qxFii7IBq8S17GIl/pZ7mA3toTY4urPBBmZZAMwjTeCHlAt2RjDG7NomWYzEriSoXyQ8kZCBkpkRJpT2gzSK/AsGQwataMLRgTkbBayh5wr5Gg3M6GFMhCH5qkv2yc27b3Yq0MVCEbYqqlxwGWwtsQHuHCXJFZJXI8bYXK7cmkOyYHoEGKVUOuR5CmyAQi7DySI2G2DG0gy4xHMi0wZRu0mXoJQqVFbtjLpP50SY7QnJAkaj4ew1CaHpI23C5Hl1gluViB5K6qtLJ9y/cJwZM2jo+GbhiGji03ihOyQjKxxYnY2P9YbNzdhspYtyhBk8isThavAstEIGwIm5/AKROUv3t+hKdhxUYExCyZJiiZG9yKFuTDQUvbcUB7KTGn+iIJuTjkmSaUTSXTmXuQplWaVJBPkel1EbD+RwekfU0DYB6eBsMpoIjWCBuNxpOISf0RGLlL0iR9aFpfAu5Km49tHSy3CQ+44MZS3wNvMhpQEt22GMXyzanBD86DpGNoc5QQks3wsDRMdxKSJF9wU0qE8CkXDLJR2HhxOEK9Yg2ab6DUJP4u9EPe5b72LU4iRBsKsD6MEKmNGJegolJQhtiix6Ks2PCgeoGiXZIIUOpkS7kIVlt2MnAglnYTqZENCiMasuiRaPZVk+/A5gVCIQThCcrLE0edJJh3KZFkSUi42Iclh1uJ2vwRwF2Nc+wjAvVkSHiwkVI4FiTJkKk04xTfKRJ/eEoFPA8xB++SPtkiflm580/052XrIH3z/AGJ/Ohe/NOT34j9ufvacWyy7C/k5/I5/K5/tT+RRJfcI/wB0kn80i/YPcDpD+6RT+Qdv4c42+RGl+sFNrxE7jywivyI4snrGFh9Y0fvEr7Z/O5Mv55/KY1+8fz6fv6fysfsuSv74l/vmPV8z/9oADAMBAAIAAwAAABDAQpagBkLxWk5MwnUJy9iPijllOmR/dzuE3ZhTT/Fk7GlpQ4ik85swWgpw5sMTKQi0P+wGZ/W7urLRxe+bJqJJ0sCu9rkBg3Neyavt8M6ZjeCzpWuwgH6ZynKe6hSlKS35G6yochc/eX72CRL4eMq5B6NB5dQLeUrY4srijlKNRv69mu4QJ7rG5TTeh+awMIpMrSajAh0t1LGqtz8uzV+HxY3CBJPS8iaO/s/rso0Zz+woSaRECjxUpMMPTbYGwra4eBa2hG3uFDhIBa9HmjNxl25wNZ39fsF4R2YfBsMJk26Kf8rF9s3noGEpubB4s+YdiOjcbg1vy/6+u4+52RfA3dKOiVv36e0DKpZfNzBK+HFQgrIZD/j0BW4fYv2BqfeOr6PvkWKCDzQxU+j2Gu+ITAkalH+9DKZbKIdddoJ226TIU1mkcIl33BkgBr9lGGiduTXxXUH29ct5wBgL6qSsrYqaRIinfsMlfGA/6n41AoFZ6dZR9tWUG83+Wn8Xs4FyyI3Y1pJBsr7wSACnn+GexCWAaQjW1wmg1Gbbm0XO0V85fKTAWawSrxlvPuD2XWJCPM2/O8FulLrq/qtYSV4FMWnJ6K+cdmPeLcn5CM1JsJi2y8p7/8QAHxEBAQEAAwEBAQEBAQAAAAAAAQARECExQSBRYTCR/9oACAEDAQE/EG98cl7hpDG6P4qFhh48cBLqX8Nl7/FNF6v83R4juWE9+wRGHXs9cReJ6ODr8vd5jpDIu7N6mxBnRZsqyFklkfc9nQN/N843hl49Xm8cCyK7uS5MjvqgPJct1fHP7siHF1ngnhvcXu85eY7OyWw0t71EHlbQYBhzuGIteeK9Rblso9tvK8Xm9Q4OqOBITXHNeWRMPTYa5FGMdWT6ljhkj3h93jiOALp3ijpJ2gJ6dsD22eSncb5vcHqA7I6oPqV8hfY74b7zeL6n3OLNvvFGrckHoTdvCZ/SYzbOL9QOrMhPtvPueOR3ES/g+56R38T/AC9idO9dhZ02T2Im173YDyWBwy099QBf7ewWTu9wWZBPH3m5uR65GL2izu8G2GbDu3dsw0mzP+HFFl1x1KfOPvHjgebPviWxaguyVZTclTclzshOhLTZlwluDYPf3gOAFNagj3dYXiHBtxOdMWhZrI3tfR2HvD9wVhx+BKtD3xqEO1asO7Zd5eJBE4AiyGS4zMfLdF4w/LbvY+Uk9hrpP6k4vFmama7LuKpME0ZP9npkpajqJ3kj+lB7N+ka2ncHp/7lnbJs8bdkDe3YnbkYvUgwp4hra/bRtr4ge50zLoEsh6kMNvqd/wAi25EaShpbBCYPWz4t2SyX1dLverttn4rDg3aPceXZoydPsi02ZKPPpJt0Z5PphkGWsu/6yr7CsTNmRdIW9Ze7bfB684E/g68Zf6k/bLbo1Z+ubHuFkXRP/ELUthLqDDP14hw2GX4eO7r8PX6dPLYA9s+P34lhksYfRLqefO/2qXrLPYM/fglrfIj5Ce7P11P8tJayZ+jrUzeEvInRDWxz2HeA4yzk8z+nkf5JDOXvogOF30L5RAXyPxucCdfp9E8Z1wG3W7LtvJfx+dN42Z1ZZZZZwyDbNsvC7kYOMgh3ZZBZf//EAB0RAQEBAAMBAQEBAAAAAAAAAAEAERAhMUFRIGH/2gAIAQIBAT8QvHMOuB9XmfeQ23xxL1zDWDh5POB1xxZaXSWnE+w11jDyXbp5w98u0Xj0vstv8vGcV3Pe10cX1BFLtsYX6XaG2To+Rhper7JYRewZZHrq93u7waQs5sHRGL5pfDANvIxwkGuP2Z4Fhk8Hq9yg6cYPhYFsXaSRdlpwdoO5sIIvkx0vXFdXiyaRY2RUvyXThZIuhNAy0MwGw2DvkMT5JeL1wXUurYbUJEulliQkXOoxuFGH+V2wWo1YLd8skk4LOpvN7hpHqPLiumQYYfXqkAmoWCo55KGPV5ZBv+LpfyFhwwcfOBsPc8l1zL90mAz0hnpK9Sd8sHZ5DnsCRm934Elk2vyOi3jeSyde27r+AeOn4yPV+OcncAYkudFo6ttb/wB/tALMOerHQj1xSyYDEe3RgM2f0gvsh0tnGR53GQsXPzgeKaBBY0W7N6n0WYsnE3xPg33SDpE9ieop1de13XUgfWwnU5A+2YEAutknEomiU7b/AFBPU+2p1fkX63xs2nkPDIhOIL1jU4EOJu0hurf8h3b2ChPsHB8sum+i0XyjO6NYvkXsJ4M6CWsHUmseu+V7lkQ+TTGD4y7GOnbEPIYz+EL/ALKN7HgkeRQ21Y3cQepe52/yabsdzpWJWPbDDCXWXqGczqwd+QOgt4w6I48dku9TH/LynZruT7eSIASIAWh5KtZTOzXbysB3D+BBw1vkYQZ7HHkPFPpB8CXeFq3+Wz0CYjWw8yE5BaB3wS2xqW3feNJdd/l8n3AuCAYe3hT3YG8ge3Zryy/JYehk9EptdmPYt5ZTsECF4G6mGHH+z30joz+P9nH22vGWkt7I/g47zKu08VnvBliyP9/hcI8sWxIeAPZD3znd5fGzpi8XvHGcHsz8ZB5rHyjBHHm3DiaiCgbHscPB4x2EOW3UcYO3y2Dy0l+iXs84S6t3HAca2XuPeXj5HFeG5Lrxgu5ixxmyCCWXV3Vgy2DWy0ycfYbZYYTJSkZCHDey0sTNluqZm27GHsNm/8QAJhABAAICAgICAgMBAQEAAAAAAQARITFBUWFxgZGhscHR8OEQ8f/aAAgBAQABPxAAzcy6qVg7gXyTbdStZZBMQQhD3GBSUyOZ0ZZxmFUWBI1uIAbwwTSIoEwWV1OJzM4miF90Qpi45ijE2iS53NShicVCgxLIGD1GEeYCsQpq7i2iywZgBE11DbuYquO3mL3UEtRXtF3SghXuUsHMI8hi5YfiBtsFC9sEREhVXuOi16yq5UvmAoxlgoqGs8MqPUBSHCBWOZiIvAFquCh7e4NhdcULfUBXaxdwHPB8wgjfmDuNZQL49QDk9W9Sc7XRe1MNy+yZJApd4D2HbHqTVLSecjLhnDZvOL8yuis3A9Bh8FhVjXiMQFWeYo71GKzBcrilEKNFwj3AqFw/mA5gqsVDIow2kO8S+ExItkFcZ7gHhGmCs9RK/i4C+LqOaPCNq6mFZxOIqMOdSrglmbiZhdQVhq4I2bnwKWYMRZ14geCLlo7QAtWDcc5xBzZjDipVmDfwG1x6PiAXsxaxCsWEvcLgPkVsL24L8Rp5W/FI8rD6juZVgKswqjbRbfK1bamrMbC6wQPYZUHMr3xGyDbpRSnMc5m3J8pwWNFLvNA1OZUoxv3ZLFIPzeajwox8rH2ERHIiZGMp5YgJccls2cJoOo231Mo1UTYxWUG6ZiWwqZVBr/wCbgElsB5hbSsxcB55mZ4Yj4GZSuUt8WpafUxYvzLEbQ7i5OpUXEoHHqXNiJMkZUZEqZbaNleAgm3pQtW0NGc6iTCwW2EHW8c84iOakVd0a7lUOgRlUy70h9kfCQttSQ+VfMqTrXQlH4D6eZbBpFvkufr/AGZaEAApC5t5Xb0Pc1am1DAs6Yo5+423NCDx47qhouwWFdFwG25WtubfWo4xOFT/AFEyKOkELPpMWeoL9bshiBu4JzKU3c0GiVBiKBAJTA1zBYtSzSXuo+YixB8TM8x3cxBAGWIKjHrKHTPAKjOrKDBAHGahZQoivN5iV1xL3mSK/EVKoyYMtoxE4QoL4QEqFzRG6sc275ivdDPsn01PaxbYUfJX1i63bsuwPKfaLYKtwfQUr5Jpt86FH6/MyqCIPOK/uMa0tE9G3+PqC7QKNwoc/dSqwLgI0Pglr8G3H8e8EN8gTXHjLLziL5YFQENIdlF0M82sPKzbF/Ln8RkjrSZFudNchMIop5uhMBgxqxuE8pYFkT1LTuCyYK03z1y3+YwcR7RUcSwgMW+6EuS4uq3EEqlYTCTd9TjeZRfMdfdTE/qCm5SrnMHTmA5Mo4uZqs3CJGkTq8IK8gU+oIpV5hX1tol/HI53Zs+JaXg+4+fG4/F8vIAoPT+5bZkBaD6RMfPmI0oA4rET8kesELaHr8E6VKDm8fipfPaYPXH5nFrcfKpiZpfPKbgtLaXp4nqKGsui8pyfiWomtUp3d17r5jsgXaHv+SAYB2zT54idcasL08J4hg0V6erB7ExxPL/yV1nQRmGNGoPnmUWG+oJgS05zKWs77hD3mIbhndZjDFuo4lcwp6TGRjizleJUPFQbebZlecwUz1LEHCS0HC4q1LGXeYI6qCbb7eIPkEHVEt5WJeSFpgIlAFY0Nq58w1Ap61MYTaaj2KG0XAKKshk+pdwNG0qI0Itk/mNUU4U/3iM0oFobbwfqBogR5OUlhsFAq/8AbitM4ErEU35ibY1VDkpfULUIAQDgwYljMd5DX8TDDERlUAeFH09QINl5MilAvOCXVDMBMANOXmIGK7xUAN4/80thgDOISXjESystl1DzWWPrz1N/9wY2VxKtogugHph+FLvgWV8tkKh1U0qrihYEwYwUxarZqzIN16mNir9pyvVob8REMSmFlNOqEq24u4Vtf+pa1mjuVWBapuGgO+oeJt3BCqjgNQ3sYBlY6Y85QYhjjpeBT3K3QarAd/mAG2uiJubWICCY6NPf/Y6iDlGX5kb4qM1oVqnN7tFr7xFQtqdb3U100lGBU8gPzOExcpPqUt5l+iVaeMIHaI8JmdzNzFwu6HRblRheBHsEpKBASnRNDwyn2yo/MeDwSySRrMdWGY1d3DLWstGoQx9xboKsRyA5yD8TKHoMUFwZVa/7KXqLFywrjUMthjp5PzKQ5cdwHGSNRClrxBAqKy8yxuI1RiogpEGbrBDawcPct3uuJQgsO/EL1nNMrIOEsEltiCpXnFZl5NMl4Pjcu5om2oflx8wl5mHMPmUHUcKGxj6gcuJqjavETi5TZYVqUWz/AMFdokbuCWDskw9E/wA/ifnzxOJYmGSbms9RAVO++IwcysYuXJHpQg8WiyghjsjHXmICzwKysBiUsGV+5TQgPUBhwyxAJSRKCj34grOPRiMZh4RhAMzSjqIQbowQB0x3Hri2UlZc8Iaj8oWkwxFmLClL8RwjazxL1KidjZHSp+oNLcworxuCtRExTbHcsG5lKrzFt4iTLmAu2oGG5cZSpgO4XxeoCu0vV2MsYOZcTCfjmekOVmYaTh9ymCQbqsQMoAbuBQQVbLKdywuhZcxczG+4VgtclkwhTtZphbgRFIbgCbPEVLBBGUzVjBSw3wz5gLqHWq5uXXlgIo8tjO4bpgbJQIC3TS1GPOIf0y4buzW6gqiVcrT/AFCUCKsjhr28+WFLJwu+ZQQBtgDPO52YDmZ2+Yiy4IxW5aWCWKXTLCOYmFBVRjhiEtHExN/EvqbuI9CA4Zl6lQAblN6gv5gCZI7fmBEq5bQhAXQUymVscsZRdJRLEbFJj88uf6jmQO+iAC4VlOPMMZhhO43sldrzySlJhK5ouxu4ogs9xrQG2ggRW93YxtjkDhg0GSoqkC4n8y9zHfczi5iWAPq7OXq0TAgL1CDeJRxHyx20WmY3ZbvcFKgOoC9wV8+4VqRFUCHmFozKJJbMXD9Es9UyovMJ9MqUyPMRdbiV3cCFUygnMHG5Y2oHTTd+VidYRWVWiFS5jwZCWtqWxY1FCZQsvLNJajtpvzIB3+xfkGDjTfqGw/EyFBip30HstAZK2QuFgYUIjLSAc+4sHhSBvF1lXgLWY2NbZ77HRGBHKg/CP4lCOXtc/LaHo5Gx/IJLbdn8EP7Sj9FVQHq5D21GgJRTWqzHezwx8ds3lUIF2BrCAp42X5iWPEApF6piVuMsQoK6gHivmXEXhFM1FR6lTxKmUMFspGfuWQdlrE0jtDEl0li+IVrgiuDYcw2YxEWo4kVBy9QpqmGn/wCVGAo8cAcLhp3LQVxO1MytZcquoqATgBl+IZa1Q1+4tbM3gLcalBEwojETeCEqXY8rsqExztge4BTcgKCjeQCahVm2wQZYbyhy4FSgQTVbfaEArsGKlKOSsN3UI5QBfeoOyYLYtwDkOIjshxg5IBXt1zUoEQXMcVj2P1caARBORiXUpXdQqZYGICchJX3B6qJ03FqYjgl5q6iO7iMSFuagEuLK5j+qIqvmAPOoxviFbqUXmBetzAdMYMxNG2YioYXQ1BCnhJcsHTspfyx5MKvhg025ecxWUFDWbjW+IoPmWgwLoUHEf3XiSqPyxrC9zlI/+gYTa9bn1AmSE7Y+kGWjUjJgsIKDZU3fLuA11iVfevUo4EWVOWnUoCGFMex/iBRgljCuK0bvZis1BNsyCwVb5ozAgjgssWsfsliJFBsGU+ai/BzOy0fURyY8PuYzcviUpZ3Gc4jTefEvMxjcs7jjcxDq5Y6mElsLdUsfdT6VwPvClvUIcEaeols4jt5zDAglmIGkvqPiMjs1vxAtCt5KBPkItNzs05qPT8ihCNmU6oprjOAlirlKckCbVcXTp8nudoSArYv9iGwsMeYJrxOwh6RSW5SrlELGEwd46vJAwSc4TmFrllsm8t5zMAjwHLoP1DlG14NH8IZoKL4pcfggSIonKdWdagxG/wAEq9zVepeHE3rA2ZeMEEU1A56lvFQDLiPhUL5imiZWCGsEJ+GaWOBEcmo7mzLH1UGXudW7/uFUqsQ1g0QZqiUXKNGUFupcN/DKRuXDZYcfEdHjLA5KX8xjULp65A5KGnnURSiao/ih9LGlnKz+mJZQHGCvuZWbIPAt59oQiKJrq5RymV9GiOShVIOAqwf3LQddbepnQIDBdr4ryPFvcPL+yIeEl8LPBGaCBVm5aZdmqIFWzTJfD638Re9LXuIXlsDdifTFFatE4CIMUOp5GYhuFaNxDpuLqhqJnM0tIijCgMxM7mRUvcxt3iPtLjQXmXrASr3GQXXnUG7uUnkS4O4qId8+CFbPxCIEIYF8VGWcTdgAVxDyJAeSFxu86pF/OZgpZvoqAsSvuWYudQWGXmEdTjPELEHWGpfUl6zqOAQq3CSnNQdXUOzgZjT5jAYVt2aWRV3kWH7mPEmeajNWMLdwohsYthhYeBgSr+ZW+YZy6x6G/ibc3sFtP1TDLojxxKURDBGnZLDZCilJQ4SDxZOSh+YI5xEOoB20RWur3EQcQsGCFNEpZ0m4EEKAtviXI5l7+Yc2542+4gECouFDq4CauAQCoOEGfyfUxrgCISVTXcdVNc51GG9zRAI5AOHuHTRVIB5qW5nQjXzE4Qu7hnwODhV8y5+FZlUfWDziWph5lYNUFviOZzdkHBu1pCJsG+XmZQqr1o/wze+TMTX8fcapYAFUSyu6iO7grE7jHJecz2RVZjeWEzcO7ibLBKbEQNt+Y2XmEKfqVo7lTuohRBKVuMpcQkXu5UPiK13ESpnQXlcwWjl/UazUrMweG/EtMO2VlZuElgQvXUbBSrwzRwubhip9GbmbLqO1LT41KwDFvWeP96mGCY8ktj3H+xCJVyvV3X+9kqT+jeW3+IyVCwPJaY+pjwLgXIQwlcrZe9AOmDdLe2TNy/MQejH+YGPbA91AYMQ0ZVj5JpCq8w4Ci8VClVLW5bzMPMSnli/McXUosoZSyCaI55ggxiUmo1LcXLhuXOY/Sjyo+qIoiGwhurqeFgRsiKV+YsI/jB1CjcIKXxzMYAt1ybJawpUj82WnwR9uYRyL/mUaaZcD3FU7gaYAn4l8K0DmiKwx2hzMaDgaZb/EAzQrYfN/MAgJS3Tm1n4+5ZFVmEa/UJuDVXqUL6eG/wC/3Fusgo3k/wDv3HUBsPTH++4ORtqjdmFxmQ4AMHlIAsi7Fu5V6ghohM63c7cG33KxzdTLi5WdxbRPiK3u4IaGO0jAKlFmFxmMPuWLcBe2MyoAi4QfhMwCRLpiHZ5il/MolmI6M3LgrMq3mJ1oU2pePpgBek04Tj9y9dvU83qO3fgDABgFqb+YOBWnErC1UH/ctX+GqH3FCa3lGYYKtChJ6hNhc6lkMxFG/mMMurccf0/iMyDFJN9Meai5nql2/NQzsK7eSx/cS0EqQ8uIycmovdn7Y01tJrNceP7nOILvZ5loYCFon+yUSifEDYMI6BH5mpbwIMyPqcOqHMMtBTqEsMmpYXiUEYRlkqEAjQxJ8/7h5fEzq1HXcQgx86ouIzpBlYQ0Sml3EYCgRj1wBMNf4VJdEBdus5ioAIozRefUdWIoQxXiIFsGlXMv0Oa04mRzRg3CwhSwTipolesViAepDAxDdBZEoH3CcUGXfL1xEBVdVncNYBbhWgfyQjcYD0hmWhRW85rEfhJCOmKO3zHqWyDgKIowQyoVE7YrgIxMcRXQQtGXXIibolDAQ0lRA4uUw0jOdqhZHuMzBCORg1z8wBOoQJcugPu/uXFZqMNsQwjUoMHKc5uUwKhDSoAm+GIbdPuEyE3svJvTUVWqxRZxLARTQeM2xkWZlQPaa5YLVBYJXvL185l8UCq9S+hxpQoIoG1ZcSnkAwGWoxNBgKWcV9xqGEzy8fbcLLBcWryMZpkLwwxrjXe68PzLEEoUQ74hibnpdqEeUhTcKAB6nvkf7BHncINncM1txii0xlriG5QjUAEcTKdJuiorFzOtvEp3SHSozcKAxKzOfEQL5guGYZXhnjNQBKwQnHJmZ20J9wRqMsvrmXCMkIlJ7aYoiSLUOoh9L+cxIk4Jho8nMyewdiN+5XuiiwAc6JkNprhi/Obhp4uVZTg+yBCkKN1nB5v+ZSXctbur3BCg0J6YhsMNGNPGOYDMmi2KP52eYS0klcIv9cyIIWt3+eRhXBktenqHbbQ+B9oTO7QqvwHIK+47Zki55D7l6pQM7ivAxCTEpGqRhPXM/eoMvc8xKa/zKGIBmx+MK4s7GJRLxcUBo2xBTn6jOJeOoRSQE74huXWYdlaJm4n6lQpzE9hGDZYCkUuYGyFSmoFkd+PMQIYYy0X/ABM/RKtNZqUtMVi6qEa0egXb7yRNLRGWxqj8fMWJwCb04uNJwX0xiWCLQcLbfxG4dkhsmzvj6gmlaKr02QqqxhGpmaaqmpgkyrg/l8Q7A3V5S+cwMykboMvtfpAKygsx/wBodTogwiqgvJH1sQd791MRKSw9Ryuly0JuHshQcykyimKy2RZclsTaoxnhB90sIwQ0QUpKOIzp1NE8wHBiOUpi6qALcSq4wCv7gC3PUBu5QU3AK3Mocc+YFW4DwsOeQCs2YSXNva3wkty4y3EgAbRlf8yz5oL0ptP1GStqKHYcQ6oAtT7gEsYEa1/vzK6wOUP3BDsy8xqwwAov4IPgqKUQmpNAFrGvLN8Rr0X7ZSWR4hLgQ3P9xCm6gE4gbamdKSvVuWMBjmKS4vZHBRWIzZIxlUoTG4cN3jqKy+ILb4xF6XUDLCFKCUW6hlfqcLDU9Eaj5eGEznEcnjERoSkhhiguPLINzzKVlzDRGYIwUjWOAMsTI9SUV+bIHravdBVnzuMELmS9ysjUxUtNzyRAg55ICbPpMoAvBBFgr8Isb+l7evmNEFT+AnLAMUNBOFQc5PPlAvq1Hq5xse4kcwwxksjBYULNL2f1LRElsBEtXN9wuTLlho6GIsaUgHBcMsmIS0MQSuWOhKjTNAyxY465YzW0kFT94VVtGYFbLwYxGvzIh/DolW3txKYVR84UR5GMzNSRomT8OGGhwlVggDsmaYo85ZfbqOpjOeAP7lLpVdnkSXrQDg4D0kGBLM0i1IIVZM6L4X/5xL1D3blhGc5yDf8AhlM3ZC18sM6MwC+eI0cLcALYnXAMFX0FvlYaKcyoDG0HMHiJEpGAAnQYj7lMBeOSMi1iIpZWxFauNCw7MYuCERS07luIb8y5LmDFpUTt8steaiLL5lNjJ5iKzUsF4SwLmG4dcTP+piG0gca6gwaixQWoCUJTQVcCVWpaqGuYwrZtaqVD6Civy6IPEkZa+f6RjbtyrXzL2M38iR+CIljDHaENONfge+JR35GR7PEDFS9RyRRz1bLBNYS1+xy/EJCQoBRAq1A/xENXCi5vGob1g/NhfiItRnggH9pXgsqVeL7mqkGUU2N3hmHgcXOrIh3BXr1bUVLFNkCuoZgpgSUk0xUvLKXMwRlG1iERTTuXgTShRhdKyvJRDk8JWCsMZbZuVKaEPnSFwsUKyyAJ3Fyu0TABaiV9zCxgFQ/5xMFlhqV5dsfrS3nbLO2rPU4BuSGMVXZ5VX9zY9Q11mXcBds+jklz/wAfQLw+GLFjQX/o+CCqEw7fx0eCCNpmcUQTTCBYFzAZpTAfLGMKTssRZy6uI64lf+EtdB3DQN+ZUKTVX6JesS6h4Fu5anTi4eIcb8eHZCoiC27eP7SvcrKUY6dFcEWi3zUENPxHKlQ7RrEGL+CELjM4RzPETkwRaDaKdEqbzqVMgLNa6jgsKAE5Wow1lfaAoKUHcOcnkV9SzGvayqdL4O4gWUDm4jLx0Skspj5Y9fqCVBfcr0blP1yTXsoAH24gchGZlnRohYaLOwcSn3cMUgZh62fOoXBggGxGrG2Equo6W7xgw0+j9rLafplpgO3cBeao5YlJjMYg4zS9xU3QN9whi69w0ZzHGvzCUWsS+hGbUrcsNBJf5t5T3UA6VaKns2RGwKCmPEorH1LnIHUYoA31HsAe5eKn0wmGLLUsI6NliIO4zD3GUAE734iQxNLn6I0KfP8Aoi2627YyW3Xcaq7i3W8WLQGqxC1ZG2IhKp9lwKbTNoYR6MZ8MB8UPr7i7wc7Y2NXFt6dsbRNj4PRoPTMoF10Xm5KzWyIfUMvrzEUG6HOEPtv4YuhjmUbWZDESlarmDEN+HhhIc/xLAgBm2iVSdaD+YiGzXhgaBgIFmswwG/MHly7ghXjFsO5KQjYpXJiMpu10fUbkdLB/JhiUYM4k/uFW5l55KgohpYQyPzGjf3BbEwKQvO13K4kewOVBMwaXULVs7uXuYrtxLA3c1FWZM8Eog03CV8gB7QWui41181uK4bD1KBFUcBcVMo4By9ncMCvLIn/ACMRywrEFQjq8wLMFSTtDgxVaA6OHGuYK8UZxpnj6twYW/THtZeiUdxzQ5rzFTkc3GzM4HMJBadGD5hVB3VAMHGopvIH5isIK6q4AiNq45jbXmlQgGh/UxUzTzEIBwcRUDitzA7XgHcJpBndMYYhhWvmYvybu/U6/Utxy3KAsaiCswGIjuDcrgPcZxhk4HQSsBgMRHFzMyzQuyWQxVcy+2DfUxhB63x1AedxUXejmXzgxLtBbt8rNTY8ZbT5hNIHUt4tcrek/mXze4BrQSx2a6YuI6iGs/aC/rxDEvi0k1UdVRO3x5Fp7Bj60ItRVWK23MUCnDzLWGWByMM9XdXKFyeQoWKmp54nAPxKdh2nzBUIuJdSeDEbUUEdfEIxV5llNY4Erkw9dy4pdAdw2nNbRLQfxAdrHEXSNphi7Bu3PfzB1QDjmVdnM00rFaY7eLgncGo22UpNyz/2feCNsbI54gWzMP8Acd0D8xNPLL88ZGeFiDyRbGyt57cdS6oL5CFai4ndtglFn1cHBZ5YuSkA24gezODobo/EOxSDkUI1kkdW6UEU+z/iMgkd1FxsvqUEIF7jo2PiWKv57mQRxsqMyjjDmjlltqdcRDk5OIRNlbqWwADFEHstasuDRnN1+JS5M9wixYc3Eq4xHh8xQGkNgW8XHzyjSk5mM6KOnf5fuFdBZc0VMgXmU4AtYr9k8uA1+pkLtXByFQpRZWVxKswSvG5o9wB5hbohNnEqiqjUN0qVLQpR4l8GGZtdwsLoLl2HlN+GX8rYc1GletRH5gHwbnEurgPRTh8y5ZXJ2w2w3i4g8qD5ne+FybfiOguUbQzFyovuZaDNPEzXYtZw8+YRY8O4hlAuuVlUjRS68EHRXNylXVrqJnsalKJjWOY0LabcOopby69f6pRn4uA4Cgr8sY6AD+IqaU48TByV4hQldk04eHqPtRjPNlSkswh0RBxbC9Qj5NxrOyYHWJdLSDWDfUoyY71NBcWiFp1DDCHG8yxqvcwhqbFEtcYh8Bg1BOiORtBymC9qfmI3Q5Zf44jaOVkNt56wR6uzxR+qlILxBA6yxl7YFpIAtDf7b+BDjj5gSFWKgjn7jirN8zIBWIr05xOSzWeiBm5XCV1UVnj4iU0M5l2I/wDIhEuk1ANV9yoXeOS9S1hWCrgJV08DGrRQwG3mFgYruBdzli2GBg1VuMx0sK3luLIGH5h5NygVoRMEBB+owQ3KAvUQS7CCrVzEch4i4T4g2GDBChL/ADHfXzGCdssscR0rCCvpuVh6l1dVqXJkzsCIPs+1jinhiJnMsbAP5mFF+EzBos4IHk7vAti7BxPj9YA+JjQTsNeohvv+ZaujxqF4XmAl6OMRCnhoAkhBBrS08S00icSzKsf9/M3LLdy4U1z1Aq3MxgbE3LsKxRCDK+XPMd05lzGD9xqpthgD4qNIQjYxFxhwerKpYxHGGOii4JXZj8As2LAB6hYw8lzR67l1k6ibWxQD+oF9pQ37zEF7uPJ4grmXp+a/iUhF+q2OdPkUI2HnjJbDFeuoA4UQyjPOIlIKXmMoxTa8tRMTDPITT8B8oALjauLjKc48TO/UY+FlFAwRKOdBysrLyWmiN8fXibCsvzKKKJXU2D64iUsvcGst893FatDuU2ddyquVpENKfiEsuq2kec78agO1VDM03x1CWkp6jVLEyPmL3ZChSjMa4ym59n3N1XEzPqCqgKubqIrxLxqZjiaDOZsNGZfDuYsNPl1EUKEH3/aFg4j0Q0Dm5fSj6ZlpT3MjW99RrwfUBlxFALrjymZtkNQBlepf86tfCcXXyUPasYY6deZQR57liQJGjzZmontxtd6lBDwe/MoKYo1Wpbka3AbE7jzY37ltm0RYbXyQPggF0Pe4C8cwLTBPC4hxddRPvzLF3kmB1HWZ8wSlXnbKqAkqvcLvb5qOmJ6lEpsa1SjWM5gNGZoOariK4CCuCovl5grceYso5DEqs3cOgYdW/UoGsWxTKVqPuGBtgJeh+UPiDaOCBKpbDYG4kOJcSihWyv8AAzZYLmQt9Sf8Jh1z11K7CWAstfuNewSxoIJbv0Rg5dHXUrDKNO5WQ6hmytQR0D9zQsq8TMzMwvDMAbc7qU22uI5Rpqbi7VxUWBv7iuOc7xDbh6l8/cALXHMIlJAtKNmXFRGhs5gnCHoLr2I/lFvfcCzmrjtt4mO3PuVjGSuIozibgfRBN2QqZEMeZhW+oRP5gnqT9ZBKOs4AFWXDjz5H+fxFT6xcL4XiWTNo1zENMziFHhg/dR0PIRwp+y/wEq0rPUbBv/LlZe2LaXvslyUZhIzxmUK+DZblAh9rV/HMQDLgA/MOxh0KUtPNGpkenEVXzEAi53FVW1z5iq3BmII2VqIEarvUaAdShUA2Obu+ZbRdkbS23FQ2LF3cTJwpn5gaWXOID3ECKKDnd/Es8jM6HiVFvjmFJCviAN5Y8ZlG91Oothq28zGkqAdzWKNasHwRcD4HNBfhZbKtWsEtiG7McysHRGBCuukvwfRFYFdqWrBlvUWM7me3xUG2r7j0eg3cUPqWjKIt2Sx67hWlDXiOiLe4KAvgqY8IUXsffEeJCC5E4fuCW8VgIUZy3x8w6bdStZx1KQyDe4QI0IR2eZaI0+Y1jnUcMtZmIZgFDQddwtpYkzJlsV+Zd+aC+pm1mG3cxS9Q0xUpnqOR8x7GI8Gf1MaG7wRxV4oioBr4yzyDjiUYUH8UGuu1QP5MTe4wcfiMDgXiOyqAMwgsDVV3BRcgvDF1+5iKovctprmN93m441l6ih0J3MF1qOXmGiTqnJ6iTPcPmLYXwlQBYSYDtiK4lDtf1EnrDVsM5tr8HPzqXBDLXywGjn+5TXbPqDi88TciqFx1y+oocTrEsyC4Gga15iAsr5jmTcpHZx8zlH3KNX9x94iwr5Llyvdajs61HBCw4iNNaiW06mNOY0DfqOV8w9SgYzeo1YxYPLjONAdJb8EArbEo/qO27TiCAGB6iAtz53CtRgxAAWOpf+iNxrPEL2nnjK9S2tooWJZtV2y1Wl1L4r9itRXNkOXp4NS0821EpXnVb/UtjisAuLOiFeADrDcdk3bMdtniZHJrcuCpZa+Zmu+sy5DxmVDVOKYI0FrMqbIKjb4lJ/bLH4q/mCCD6lICfEQAq2PUWJOdR5F8cSgn5isq4KszQF8ajmms+JkF2TG94Ynl6lipqj2PAxlLvP8ACBZC5OB/NEhVb4hDuMLL3KApipuLvRDeCFDecxZ/KJeOXiNRWFepYw0qHgimnwFwEBeWLkSxjMBInkaiwOei2PCg8HBNSXZyQyzkqFHNXjmUttDmMDmUMmepycxnMzxbABQqoBtVMYG31uGrGGHrvyzImU61AA6B+ZuBBoo+phoV38QRlQ9QYJCC7JyEdOcxc52xRzxr3GyCrXedMbWj7m+cTiYiUBKrjmOjQFdGyJrbZfI/zLutRaPEtQhrliYLv+5shKnc+okPbuKjLziXy35gJu1HjqCrCuDdTDE+IfS9wxSB7jQ18Yg8tHuNYvOpR6fBChUtdYKinuBSwxDJ3CD5HzM+CFoJ5lqqvErofqCeUVXlAGnOllnjnEoYOmvcqGIVGpWTZ+wgcsS8hmKd5apmTWINlmUvqFWY+yGqceo/pmVeTEbFge/GYQdpp4Bb5I/uXA1EVfUSmMl3UoTQzOTnzC1Ct1Bo0mazfcPAkMDz1FVre5WeHqGYt3xGiUKY6hiS4VH5lm0CjFzUdzCC5aG/AuoVWpjR/uKZwj2sBBZnYPiZfkLcRGsUcMAOfiD5Q0uz1KFQOTEXmCj7ly0mILBywqxYUkKXTjf9EI6XaDWi3Dc+oOrV1/RM8f4PEMKCP+MQSgt/41FlOb/GJXqt/jU6oP8AGpxK+f8AhAnO/wCtQOVo0f8AwmfC/wAdQbqf8ajNPnZ/ER4wA6s/HiYvH/jUsmo/xqKE9H/wltWv+OoxXfj/AAQAf7vUrG//ABxBQYmVdbnH9U88CbH6hxRhj/BAlrd/6IA7XSv4g+vDahCpDppn9SoPgm/hK8FrlkQgh6L+IBN44Mn4jkSLx/RAGmf9cSq4P8aldxf46j3lo7PxBibP8amsx5/qlEw+P+EAMrdf4JSv9F+oI1RXH9EsN3+OIsZP8dTPzU3/AET/2Q==" alt="Portrait of Atharva Gajbe"></div>
+  <div class="hero-corner-stat" id="heroCornerStat"><span class="n">04</span><span class="l" data-i18n="hero_stat_label">Years of experience</span></div>
+  <div class="wrap">
+    <div class="eyebrow" data-i18n="hero_eyebrow">Mannheim, Germany</div>
+    <h1 class="name">Atharva Gajbe</h1>
+    <div class="role-line" data-i18n="hero_role">Cybersecurity Researcher — VAPT · Reverse Engineering · Applied ML</div>
+    <p class="lede" id="ledeEl" data-i18n-html="hero_lede">
+      Four years hunting malware inside Android and iOS apps on <strong>Google Play Protect</strong> at Cognizant,
+      plus VAPT work on real financial-sector infrastructure. Now an M.Sc. student in Applied Computer Science,
+      pointing that same reverse-engineering instinct at machine learning for threat detection.
+      ISC2 Certified in Cybersecurity.
+    </p>
+    <div class="meta-row">
+      <span class="meta-chip accent" data-i18n="hero_isc2_chip">ISC2 CC · issued 02/2026</span>
+      <span class="meta-chip"><a href="mailto:gajbeatharva2000@gmail.com">gajbeatharva2000@gmail.com</a></span>
+      <span class="meta-chip"><a href="https://github.com/Atharvagajbe" target="_blank" rel="noopener">github.com/Atharvagajbe</a></span>
+      <span class="meta-chip"><a href="https://linkedin.com/in/atharva-gajbe-50a2571aa" target="_blank" rel="noopener">linkedin.com/in/atharva-gajbe</a></span>
+    </div>
+  </div>
+</section>
 
-        <div class="pill-row">
-          <span class="pill">📍 Heidelberg, Germany</span>
-          <span class="pill">🛡️ VAPT & Reverse Engineering</span>
-          <span class="pill">⛓️ Blockchain Security</span>
+<section id="experience">
+  <div class="wrap">
+    <div class="kicker"><span class="num">01</span><h2 data-i18n="exp_kicker">Experience</h2><span class="rule"></span></div>
+    <div class="log">
+      <div class="log-entry">
+        <div class="log-head">
+          <span class="log-role">Programmer Analyst</span>
+          <span class="log-org">Cognizant — onsite at Google, Play Protect program</span>
+          <span class="log-date">Aug 2022 – Feb 2025</span>
         </div>
-
-        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
-          <a class="btn btn-primary" href="#projects">View Projects</a>
-          <a class="btn" href="mailto:gajbeatharva2000@gmail.com">Email</a>
-          <a class="btn" href="./Atharva_resume.pdf" target="_blank" rel="noreferrer">Résumé</a>
-        </div>
+        <ul>
+          <li data-i18n="exp1_b1">Worked within a 500+ member team to identify and eliminate malware across Android and iOS apps on the Google Play Store.</li>
+          <li data-i18n="exp1_b2">Reverse-engineered APKs and analyzed obfuscated code with FRIDA and Objection to uncover malicious behavior, obfuscation, and evasion techniques.</li>
+          <li data-i18n="exp1_b3">Developed patches for detection gaps, feeding false-positive/negative findings back into detection rules and pipeline logic.</li>
+          <li data-i18n="exp1_b4">Collaborated with cross-functional QA and engineering teams to integrate secure coding practices into the app-vetting pipeline.</li>
+        </ul>
       </div>
-
-      <div class="card hero-image">
-        <!-- Put your image at: assets/decepticon.png -->
-        <img src="assets/image.jpg" alt="Cybersecurity emblem" loading="lazy" />
+      <div class="log-entry">
+        <div class="log-head">
+          <span class="log-role">Jr. VAPT Auditor</span>
+          <span class="log-org">Crypto Forensic Technology — Internship</span>
+          <span class="log-date">Jan 2022 – Jul 2022</span>
+        </div>
+        <ul>
+          <li data-i18n="exp2_b1">Conducted reconnaissance, vulnerability scanning, and penetration testing on real-world infrastructure for financial institutions.</li>
+          <li data-i18n="exp2_b2">Worked hands-on with Burp Suite, Metasploit, Nmap, and OWASP ZAP; applied FRIDA/Objection for mobile app reverse engineering.</li>
+          <li data-i18n="exp2_b3">Contributed to detailed audit reports with actionable remediation steps for identified vulnerabilities.</li>
+        </ul>
+      </div>
+      <div class="log-entry">
+        <div class="log-head">
+          <span class="log-role">Cyber Security Engineer</span>
+          <span class="log-org">Cognizant</span>
+          <span class="log-date">May 2022 – Jul 2022</span>
+        </div>
+        <ul>
+          <li data-i18n="exp3_b1">Security engineering role preceding the full-time Programmer Analyst position on the Play Protect program.</li>
+        </ul>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- PROJECTS -->
-  <section id="projects" class="reveal">
-    <div class="section-title">
-      <h2>Projects</h2>
-      <p>Security, blockchain & research work</p>
-    </div>
-
-    <div class="grid-2">
-      <div class="item">
-        <h3>Blockchain-Based Exam Paper Transmission</h3>
-        <p>Secure, tamper-resistant exam paper distribution using encryption + blockchain validation.</p>
-        <div class="tags">
-          <span class="tag">Blockchain</span><span class="tag">Encryption</span><span class="tag">Integrity</span>
-        </div>
+<section id="capabilities">
+  <div class="wrap">
+    <div class="kicker"><span class="num">02</span><h2 data-i18n="cap_kicker">Capabilities</h2><span class="rule"></span></div>
+    <div class="cap-list">
+      <div class="cap-row" data-preview="FRIDA · OBJECTION · BURP · METASPLOIT">
+        <div class="cap-title" data-i18n="cap1_title">Security &amp; VAPT</div>
+        <div class="cap-desc" data-i18n="cap1_desc">Reverse engineering, dynamic instrumentation, penetration testing, threat detection.</div>
       </div>
-
-      <div class="item">
-        <h3>Malware Detection — Google Play Protect</h3>
-        <p>Analyzed mobile applications to detect malicious behavior; supported remediation and secure coding practices.</p>
-        <div class="tags">
-          <span class="tag">Android Security</span><span class="tag">Reverse Engineering</span><span class="tag">FRIDA</span>
-        </div>
+      <div class="cap-row" data-preview="APKTOOL · APKSIGNER · SMALI · FRIDA">
+        <div class="cap-title" data-i18n="cap2_title">Malware &amp; Reverse Engineering</div>
+        <div class="cap-desc" data-i18n="cap2_desc">Android/iOS app analysis at Google-Play-Protect scale — obfuscation &amp; evasion detection.</div>
       </div>
-
-      <div class="item">
-        <h3>Server-Side Template Injection (SSTI) Research</h3>
-        <p>Demonstrated SSTI risk and impact in controlled labs; focused on detection and prevention.</p>
-        <div class="tags">
-          <span class="tag">Web Security</span><span class="tag">OWASP</span><span class="tag">Secure Coding</span>
-        </div>
+      <div class="cap-row" data-preview="VERTEX AI · GEMINI · QLORA/LORA">
+        <div class="cap-title" data-i18n="cap3_title">Applied ML / AI</div>
+        <div class="cap-desc" data-i18n="cap3_desc">Model fine-tuning, threat classification, GenAI-assisted security tooling.</div>
       </div>
-
-      <div class="item">
-        <h3>Scanner-Master</h3>
-        <p>Network scanner that identifies connected devices and displays IP/MAC information.</p>
-        <div class="tags">
-          <span class="tag">Networking</span><span class="tag">Discovery</span><span class="tag">Python</span>
-        </div>
-      </div>
-
-      <div class="item">
-        <h3>Android APK Reverse Engineering Lab</h3>
-        <p>Static & dynamic analysis of APKs to uncover suspicious behaviors and insecure patterns (lab/ethical use).</p>
-        <div class="tags">
-          <span class="tag">APK</span><span class="tag">Objection</span><span class="tag">FRIDA</span>
-        </div>
-      </div>
-
-      <div class="item">
-        <h3>Cloud VAPT for Banking Infrastructure</h3>
-        <p>Reconnaissance, scanning, and penetration testing for cloud-hosted systems with remediation reporting.</p>
-        <div class="tags">
-          <span class="tag">Cloud Security</span><span class="tag">VAPT</span><span class="tag">Reporting</span>
-        </div>
-      </div>
-
-      <div class="item">
-        <h3>Security Automation Scripts</h3>
-        <p>Automation for scanning, data collection, and structured reporting to speed up assessments.</p>
-        <div class="tags">
-          <span class="tag">Automation</span><span class="tag">Python</span><span class="tag">Tooling</span>
-        </div>
-      </div>
-
-      <div class="item">
-        <h3>Blockchain Integrity Proof Demo</h3>
-        <p>Proof-of-concept for tamper-evident verification of records using smart contracts.</p>
-        <div class="tags">
-          <span class="tag">Smart Contracts</span><span class="tag">Integrity</span><span class="tag">Ethereum</span>
-        </div>
+      <div class="cap-row" data-preview="FASTAPI · REACT · DOCKER · GCP">
+        <div class="cap-title" data-i18n="cap4_title">Cloud &amp; Full-Stack</div>
+        <div class="cap-desc" data-i18n="cap4_desc">FastAPI/Node backends, React frontends, containerized delivery on GCP.</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+<div class="cap-preview" id="capPreview"></div>
 
-  <!-- EXPERIENCE -->
-  <section id="experience" class="reveal">
-    <div class="section-title">
-      <h2>Experience</h2>
-      <p>Industry & leadership roles</p>
+<section id="projects">
+  <div class="wrap">
+    <div class="kicker"><span class="num">03</span><h2 data-i18n="proj_kicker">Built With Purpose</h2><span class="rule"></span></div>
+
+    <div class="filter-bar" role="group" aria-label="Filter projects by type">
+      <button class="filter-btn active" data-filter="all" data-i18n="filter_all">All</button>
+      <button class="filter-btn" data-filter="platform" data-i18n="filter_platform">Platform</button>
+      <button class="filter-btn" data-filter="lab" data-i18n="filter_lab">Lab</button>
+      <button class="filter-btn" data-filter="dashboard" data-i18n="filter_dashboard">Dashboard</button>
+      <button class="filter-btn" data-filter="research" data-i18n="filter_research">Research</button>
+      <button class="filter-btn" data-filter="repo" data-i18n="filter_repo">Repo</button>
     </div>
 
-    <div class="grid-2">
-      <div class="item">
-        <h3>Security Analyst — Cognizant (Google Play Protect)</h3>
-        <p>
-          • Identified and helped eliminate malware in Android/iOS apps in collaboration with large security teams.<br/>
-          • Analyzed obfuscated code; supported bug patching to improve app security and performance.<br/>
-          • Used FRIDA and Objection for dynamic analysis and reverse engineering (ethical use).<br/>
-          • Worked with QA/engineering to strengthen secure coding practices.
-        </p>
-        <div class="tags"><span class="tag">Mobile Security</span><span class="tag">RE</span><span class="tag">Threat Analysis</span></div>
+    <div class="proj-grid">
+
+      <div class="proj-card" data-type="platform">
+        <div class="proj-mock"><div class="dots"><span></span><span></span><span></span></div><div class="glyph">POST /infer &#8594; 200 OK</div></div>
+        <div class="proj-head"><span class="proj-id">P&#8209;01</span><span class="tag" data-i18n="filter_platform">Platform</span></div>
+        <h3 data-i18n="proj1_title">CyberGuard AI</h3>
+        <p data-i18n="proj1_desc">A full-stack security intelligence platform pairing a FastAPI backend with a fine-tuned Gemini/Gemma stack for AI-assisted threat analysis.</p>
+        <div class="chipline">
+          <span class="chip">FastAPI</span><span class="chip">Vertex AI</span><span class="chip">Gemini 2.5</span>
+          <span class="chip">QLoRA/LoRA</span><span class="chip">Firestore</span><span class="chip">Cloud Run</span>
+        </div>
+        <button class="proj-toggle" aria-expanded="false"><span data-i18n="proj_toggle_label">Technical breakdown</span> <span class="arrow">▾</span></button>
+        <div class="proj-detail">
+          <ul>
+            <li><strong style="color:var(--text)">Backend</strong> — FastAPI on Cloud Run, Firestore for persistence, Cloud Storage for artifacts, plus a Framer-built frontend.</li>
+            <li><strong style="color:var(--text)">Reliability</strong> — deterministic rule-based fallbacks on every surface (API, Streamlit, Framer), so auth/quota failures degrade gracefully.</li>
+            <li><strong style="color:var(--text)">Fine-tuning</strong> — <code>google/gemma-2-2b-it</code> via QLoRA on Vertex AI Custom Training: 4-bit NF4 quantization with LoRA adapters (r=16) targeting attention and MLP layers.</li>
+            <li><strong style="color:var(--text)">Data</strong> — exported real usage history into instruction-tuning JSONL to drive the fine-tune.</li>
+            <li><strong style="color:var(--text)">Serving</strong> — base-vs-tuned inference comparisons exposed through the same FastAPI endpoint.</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="item">
-        <h3>Jr. VAPT Auditor — Crypto Forensic Technologies</h3>
-        <p>
-          • Performed reconnaissance, vulnerability scanning, and penetration testing to assess exposure.<br/>
-          • Assisted investigations and cloud infrastructure improvements for enterprise clients.<br/>
-          • Documented findings and delivered remediation-focused reports.
-        </p>
-        <div class="tags"><span class="tag">VAPT</span><span class="tag">Cloud</span><span class="tag">Reporting</span></div>
+      <div class="proj-card" data-type="lab">
+        <div class="proj-mock"><div class="dots"><span></span><span></span><span></span></div><div class="glyph">meterpreter &gt; sessions -i 1</div></div>
+        <div class="proj-head"><span class="proj-id">P&#8209;02</span><span class="tag" data-i18n="filter_lab">Lab</span></div>
+        <h3 data-i18n="proj2_title">APK Repackaging &amp; Reverse Shell Injection</h3>
+        <p data-i18n="proj2_desc">A controlled Metasploit lab that weaponizes a repackaged Android app for remote access, then maps the attack chain back to real, documented CVEs.</p>
+        <div class="proj-foot-label" data-i18n="proj2_foot">Mapped CVEs</div>
+        <div class="chipline">
+          <span class="chip ref">CVE-2019-2215</span><span class="chip ref">CVE-2017-13156</span><span class="chip ref">CVE-2021-0920</span>
+        </div>
+        <button class="proj-toggle" aria-expanded="false"><span data-i18n="proj_toggle_label">Technical breakdown</span> <span class="arrow">▾</span></button>
+        <div class="proj-detail">
+          <ul>
+            <li><strong style="color:var(--text)">Payload</strong> — <code>android/meterpreter/reverse_tcp</code> generated with msfvenom.</li>
+            <li><strong style="color:var(--text)">Injection</strong> — decompiled the target APK with apktool and injected the payload into the application lifecycle at smali level, then patched the manifest.</li>
+            <li><strong style="color:var(--text)">Delivery</strong> — re-signed with apksigner and caught the session through a Metasploit <code>multi/handler</code>.</li>
+            <li><strong style="color:var(--text)">CVE mapping</strong> — CVE-2019-2215 (Binder privilege escalation), CVE-2017-13156 (Janus signature bypass), CVE-2021-0920 (kernel-level escalation).</li>
+            <li><strong style="color:var(--text)">Mitigations documented</strong> — signature validation, permission review, behavioral/mobile EDR detection.</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="item">
-        <h3>Technical Team Lead — TEDx YCCE</h3>
-        <p>
-          • Led a 100+ member technical team managing setups, streaming, and internal portal security.<br/>
-          • Designed a centralized inventory system for equipment tracking and access management.
-        </p>
-        <div class="tags"><span class="tag">Leadership</span><span class="tag">Systems</span><span class="tag">Ops</span></div>
+      <div class="proj-card" data-type="dashboard">
+        <div class="proj-mock"><div class="dots"><span></span><span></span><span></span></div><div class="glyph">IP &#8594; Targeted &#8594; Service</div></div>
+        <div class="proj-head"><span class="proj-id">P&#8209;03</span><span class="tag" data-i18n="filter_dashboard">Dashboard</span></div>
+        <h3 data-i18n="proj3_title">Cyber Threat Intelligence Platform</h3>
+        <p data-i18n="proj3_desc">A SOC dashboard for monitoring incoming traffic and scanning IPs/URLs for malicious activity, with a live attack-graph and honeypot capture built in.</p>
+        <div class="chipline">
+          <span class="chip">React</span><span class="chip">Redux</span><span class="chip">Neo4j</span>
+          <span class="chip">Redis</span><span class="chip">MongoDB</span><span class="chip">Docker</span>
+        </div>
+        <button class="proj-toggle" aria-expanded="false"><span data-i18n="proj_toggle_label">Technical breakdown</span> <span class="arrow">▾</span></button>
+        <div class="proj-detail">
+          <ul>
+            <li><strong style="color:var(--text)">Frontend</strong> — React + Redux Toolkit.</li>
+            <li><strong style="color:var(--text)">Backend</strong> — Node.js/Express across three data stores: MongoDB, Neo4j, and Redis.</li>
+            <li><strong style="color:var(--text)">Visualization</strong> — interactive attack-graph (vis-network) mapping relationships such as IP → Targeted → Service.</li>
+            <li><strong style="color:var(--text)">Live capture</strong> — honeypot integration for real-time threat simulation and event capture.</li>
+            <li><strong style="color:var(--text)">Performance</strong> — Redis-based counters for tracking hot indicators of compromise.</li>
+            <li><strong style="color:var(--text)">Ops</strong> — fully containerized with Docker and Docker Compose.</li>
+          </ul>
+        </div>
       </div>
 
-      <div class="item">
-        <h3>Business Development Manager — Motorodi</h3>
-        <p>
-          • Managed frontend infrastructure and server data flow for customer-facing web solutions.<br/>
-          • Built 25+ B2B relationships through outreach and partnership development.
-        </p>
-        <div class="tags"><span class="tag">Web</span><span class="tag">B2B</span><span class="tag">Delivery</span></div>
+      <div class="proj-card" data-type="research">
+        <div class="proj-mock"><div class="dots"><span></span><span></span><span></span></div><div class="glyph">accuracy: 0.796 &#8226; auc: 0.779</div></div>
+        <div class="proj-head"><span class="proj-id">P&#8209;04</span><span class="tag" data-i18n="filter_research">Research</span></div>
+        <h3 data-i18n="proj4_title">Network Intrusion Detection System</h3>
+        <p data-i18n="proj4_desc">An ML-based NIDS classifying network traffic as Normal or Malicious on the NSL-KDD dataset, served through a Streamlit prototype for live classification.</p>
+        <div class="chipline">
+          <span class="chip">Scikit-learn</span><span class="chip">Streamlit</span><span class="chip">NSL-KDD</span>
+        </div>
+        <button class="proj-toggle" aria-expanded="false"><span data-i18n="proj_toggle_label">Technical breakdown</span> <span class="arrow">▾</span></button>
+        <div class="proj-detail">
+          <ul>
+            <li><strong style="color:var(--text)">Classifiers</strong> — six models compared under 5-fold cross-validation: Logistic Regression, Naive Bayes, k-NN, Decision Tree, Random Forest, SVM (RBF kernel).</li>
+            <li><strong style="color:var(--text)">Best model</strong> — Decision Tree: 79.6% accuracy, 92.4% precision, 69.9% recall, 0.779 ROC-AUC.</li>
+            <li><strong style="color:var(--text)">Prototype</strong> — Streamlit app supporting CSV upload or manual form input for live traffic classification.</li>
+          </ul>
+          <p style="margin:14px 0 0;"><a href="#research" data-i18n="proj4_jump">Jump to the full research breakdown ↓</a></p>
+        </div>
+      </div>
+
+      <div class="proj-card" data-type="repo">
+        <div class="proj-mock"><div class="dots"><span></span><span></span><span></span></div><div class="glyph">$ python recon.py --lab</div></div>
+        <div class="proj-head"><span class="proj-id">P&#8209;05</span><span class="tag" data-i18n="filter_repo">Repo</span></div>
+        <h3 data-i18n="proj5_title">Infosec Starter Pack</h3>
+        <p data-i18n="proj5_desc">A hands-on infosec learning repository built from both the offensive and defensive side of the same problems.</p>
+        <div class="chipline">
+          <span class="chip">Python</span><span class="chip">SSTI</span><span class="chip">Recon</span>
+        </div>
+        <button class="proj-toggle" aria-expanded="false"><span data-i18n="proj_toggle_label">Technical breakdown</span> <span class="arrow">▾</span></button>
+        <div class="proj-detail">
+          <ul>
+            <li><strong style="color:var(--text)">Coverage</strong> — vulnerability scanning, Server-Side Template Injection (SSTI), phishing awareness, keylogger concepts, web-shell experimentation.</li>
+            <li><strong style="color:var(--text)">Approach</strong> — every topic worked from both an offensive and a defensive angle, inside a lab environment.</li>
+            <li><strong style="color:var(--text)">Built with</strong> — Python-based security scripting, reconnaissance, and vulnerability-testing fundamentals.</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="wrap">
+    <div class="kicker"><span class="num">04</span><h2 data-i18n="research_kicker">Research Spotlight</h2><span class="rule"></span></div>
+    <div class="research-box">
+      <h3 data-i18n="research_title">Network Intrusion Detection Using Machine Learning</h3>
+      <div class="sub" data-i18n="research_sub">M.Sc. Research Paper · SRH University of Applied Sciences, Heidelberg · Grade 1.2</div>
+      <p class="desc" data-i18n="research_desc">Built and evaluated an ML-based NIDS on the NSL-KDD dataset — six classifiers compared under 5-fold cross-validation, with a Streamlit prototype for interactive classification. Decision Tree came out on top (hover a stat for what it measures):</p>
+      <div class="stat-grid">
+        <div class="stat-tile" title="Share of all traffic samples classified correctly, normal or malicious." data-i18n-title="stat_accuracy_title"><div class="stat-num">79.6%</div><div class="stat-label" data-i18n="stat_accuracy_label">Accuracy</div></div>
+        <div class="stat-tile" title="Of everything flagged malicious, the share that actually was." data-i18n-title="stat_precision_title"><div class="stat-num">92.4%</div><div class="stat-label" data-i18n="stat_precision_label">Precision</div></div>
+        <div class="stat-tile" title="Of everything actually malicious, the share the model caught." data-i18n-title="stat_recall_title"><div class="stat-num">69.9%</div><div class="stat-label" data-i18n="stat_recall_label">Recall</div></div>
+        <div class="stat-tile" title="Ability to rank malicious traffic above normal traffic across all thresholds; 1.0 is perfect, 0.5 is chance." data-i18n-title="stat_rocauc_title"><div class="stat-num">0.779</div><div class="stat-label" data-i18n="stat_rocauc_label">ROC-AUC</div></div>
+      </div>
+      <p class="note" data-i18n="research_note">Recall was treated as the metric to optimize for — in a security context, a missed attack (false negative) costs more than a false alarm.</p>
+      <div class="proj-foot-label" style="margin-top:22px;" data-i18n="classifiers_label">Classifiers compared (5-fold CV)</div>
+      <div class="classifier-row">
+        <span class="chip">Logistic Regression</span><span class="chip">Naive Bayes</span><span class="chip">k-Nearest Neighbors</span>
+        <span class="chip" style="border-color:var(--accent-dim); color:var(--accent);" data-i18n="classifier_best">Decision Tree ✓ best</span>
+        <span class="chip">Random Forest</span><span class="chip">SVM (RBF kernel)</span>
+      </div>
+      <ol class="method-list">
+        <li><strong style="color:var(--text)">Preprocessing</strong> — downloaded and explored the NSL-KDD train/test sets, checked class balance, encoded categorical features (protocol_type, service, flag), normalized numeric features with MinMaxScaler, and converted labels to binary form.</li>
+        <li><strong style="color:var(--text)">Training</strong> — trained and compared all six classifiers above, evaluated across multiple metrics under 5-fold cross-validation.</li>
+        <li><strong style="color:var(--text)">Prototype</strong> — Streamlit app supporting CSV upload or manual form input for live traffic classification.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="publications">
+  <div class="wrap">
+    <div class="kicker"><span class="num">05</span><h2 data-i18n="pub_kicker">Publications</h2><span class="rule"></span></div>
+    <div class="quote-grid">
+      <div class="quote-card">
+        <div class="mark">&#8220;</div>
+        <h4 data-i18n="pub1_title">Blockchain Based Solution for Secured Transmission of Examination Paper</h4>
+        <p data-i18n="pub1_desc">Proposes a Blockchain + IPFS system for tamper-resistant, decentralized transmission of exam papers between examiners and invigilators, removing the security risks of physical circulation.</p>
+        <div class="venue" data-i18n="pub1_venue">2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing &amp; Cyber Security (iSSSC) · co-authored</div>
+      </div>
+      <div class="quote-card">
+        <div class="mark">&#8220;</div>
+        <h4 data-i18n="pub2_title">Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions</h4>
+        <p data-i18n="pub2_desc">Surveys the privacy and security risks posed by third-party browser extensions and the mitigation approaches available today.</p>
+        <div class="venue">Grenze Scientific Society</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- CONTACT -->
-  <section id="contact" class="reveal">
-    <div class="section-title">
-      <h2>Contact</h2>
-      <p>Reach out for cybersecurity / blockchain / secure systems work</p>
+<section id="credentials">
+  <div class="wrap">
+    <div class="kicker"><span class="num">06</span><h2 data-i18n="cred_kicker">Credentials</h2><span class="rule"></span></div>
+    <div class="cred-grid">
+      <div class="cred-col">
+        <h3 data-i18n="cred_certifications">Certifications</h3>
+        <div class="cert-item"><span>·</span><span><b>ISC2 Certified in Cybersecurity (CC)</b> — issued Feb 2026, expires Feb 2029 · <a href="https://www.credly.com/users/atharva-gajbe/badges" target="_blank" rel="noopener">view badges on Credly</a></span></div>
+        <div class="cert-item"><span>·</span><span><b>Cisco Networking Academy</b> — Junior Cybersecurity Analyst path: Cyber Threat Management, Network Defense, Endpoint Security, Networking Basics &amp; Devices</span></div>
+        <div class="cert-item"><span>·</span><span><b>TryHackMe</b> — Cyber Security 101, Pre Security, Advent of Cyber (top 7% global, 98+ rooms completed)</span></div>
+        <div class="cert-item"><span>·</span><span><b>Udemy</b> — Ethical Hacking: Bug Bounty, Cloud, Defensive &amp; Mobile</span></div>
+      </div>
+      <div class="cred-col">
+        <h3 data-i18n="cred_education">Education</h3>
+        <div class="edu-item">
+          <div class="deg">M.Sc. Applied Computer Science</div>
+          <div class="school">SRH University of Applied Sciences, Heidelberg — Business Computing focus</div>
+          <div class="when">Since Apr 2025 · avg 1.7 · 76/120 CP</div>
+          <table class="mod-table" id="modTable">
+            <tr><td>Current Topics in Computer Science</td><td>1.0</td></tr>
+            <tr><td>Advanced Databases</td><td>1.0</td></tr>
+            <tr><td>Advanced Computer Science</td><td>1.1</td></tr>
+            <tr><td>Developing Mobile Applications</td><td>1.3</td></tr>
+            <tr><td>IT-Security</td><td>1.7</td></tr>
+            <tr class="extra"><td>Advanced Game Design</td><td>1.3</td></tr>
+            <tr class="extra"><td>Software Development Practice</td><td>1.8</td></tr>
+            <tr class="extra"><td>International Project Management</td><td>2.3</td></tr>
+            <tr class="extra"><td>Software Architecture and Development</td><td>2.6</td></tr>
+          </table>
+          <button class="mod-toggle" id="modToggle" aria-expanded="false">Show all 9 modules ▾</button>
+        </div>
+        <div class="edu-item">
+          <div class="deg">B.E. Computer Science Engineering</div>
+          <div class="school">Yeshwantrao Chavan College of Engineering (YCCE), Nagpur</div>
+          <div class="when">2018 – 2022</div>
+        </div>
+      </div>
     </div>
+  </div>
+</section>
 
-    <div class="grid-2">
-      <a class="item" href="mailto:gajbeatharva2000@gmail.com">
-        <h3>Email</h3>
-        <p>gajbeatharva2000@gmail.com</p>
-      </a>
-
-      <a class="item" href="tel:+491622879983">
-        <h3>Phone</h3>
-        <p>+49 162 2879983</p>
-      </a>
-
-      <a class="item" href="https://www.linkedin.com/in/atharva-gajbe-50a2571aa" target="_blank" rel="noreferrer">
-        <h3>LinkedIn</h3>
-        <p>linkedin.com/in/atharva-gajbe-50a2571aa</p>
-      </a>
-
-      <a class="item" href="https://github.com/Atharvagajbe" target="_blank" rel="noreferrer">
-        <h3>GitHub</h3>
-        <p>github.com/Atharvagajbe</p>
-      </a>
+<section id="skills">
+  <div class="wrap">
+    <div class="kicker"><span class="num">07</span><h2 data-i18n="skills_kicker">Toolset</h2><span class="rule"></span></div>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_security">Security</span>
+      <div class="skill-chips">
+        <span class="chip">Reverse Engineering</span><span class="chip">FRIDA</span><span class="chip">Objection</span>
+        <span class="chip">Metasploit</span><span class="chip">apktool / apksigner</span><span class="chip">Burp Suite</span>
+        <span class="chip">Nmap</span><span class="chip">OWASP ZAP</span><span class="chip">SSTI</span><span class="chip">SOC / Threat Intel</span>
+      </div>
     </div>
-  </section>
-
-  <footer>
-    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
-      <span>© <span id="year"></span> Atharva Devendra Gajbe.</span>
-      <a class="btn" href="#top">Back to top ↑</a>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_ml">Machine Learning / AI</span>
+      <div class="skill-chips">
+        <span class="chip">Scikit-learn</span><span class="chip">Vertex AI</span><span class="chip">Gemini API</span><span class="chip">QLoRA / LoRA</span>
+      </div>
     </div>
-  </footer>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_prog">Programming Languages</span>
+      <div class="skill-chips">
+        <span class="chip">Python</span><span class="chip">JavaScript</span><span class="chip">SQL</span><span class="chip">ABAP (SAP)</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_spoken">Spoken Languages</span>
+      <div class="skill-chips">
+        <span class="chip">English — C1</span><span class="chip">German — B2</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_web">Web &amp; Backend</span>
+      <div class="skill-chips">
+        <span class="chip">FastAPI</span><span class="chip">Node.js / Express</span><span class="chip">React</span><span class="chip">Redux</span><span class="chip">Streamlit</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_db">Databases</span>
+      <div class="skill-chips">
+        <span class="chip">MongoDB</span><span class="chip">Neo4j</span><span class="chip">Redis</span><span class="chip">SQL</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <span class="label" data-i18n="skill_devops">DevOps / Cloud</span>
+      <div class="skill-chips">
+        <span class="chip">Docker</span><span class="chip">Docker Compose</span><span class="chip">Google Cloud Run</span><span class="chip">Firestore</span><span class="chip">Cloud Storage</span>
+      </div>
+    </div>
+  </div>
+</section>
 
-</main>
-
-<a href="#top" class="btn backTop" aria-label="Back to top">↑</a>
+<footer id="contact">
+  <div class="wrap">
+    <div class="kicker"><span class="num">08</span><h2 data-i18n="contact_kicker">Contact</h2><span class="rule"></span></div>
+    <h2 class="big" data-i18n="contact_big">Let's talk security.</h2>
+    <div class="contact-links">
+      <span><a href="mailto:gajbeatharva2000@gmail.com">gajbeatharva2000@gmail.com</a><button class="copy-btn" id="copyEmailBtn" type="button" data-value="gajbeatharva2000@gmail.com" data-i18n="copy_btn">copy</button></span>
+      <a href="https://linkedin.com/in/atharva-gajbe-50a2571aa" target="_blank" rel="noopener">linkedin.com/in/atharva-gajbe</a>
+      <a href="https://github.com/Atharvagajbe" target="_blank" rel="noopener">github.com/Atharvagajbe</a>
+    </div>
+    <div class="foot-note" data-i18n="hero_eyebrow">Mannheim, Germany</div>
+  </div>
+</footer>
 
 <script>
-  // Theme toggle
-  const root = document.documentElement;
-  const themeBtn = document.getElementById("themeBtn");
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") root.setAttribute("data-theme","light");
-  themeBtn.textContent = root.getAttribute("data-theme")==="light" ? "☀️" : "🌙";
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var coarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+  var finePointer = window.matchMedia && window.matchMedia('(pointer: fine)').matches;
 
-  themeBtn.addEventListener("click", () => {
-    const isLight = root.getAttribute("data-theme")==="light";
-    if (isLight) root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme","light");
-    localStorage.setItem("theme", isLight ? "dark" : "light");
-    themeBtn.textContent = isLight ? "🌙" : "☀️";
-  });
+  // ---------- i18n ----------
+  var I18N = {
+    en: {
+      nav_about:"About", nav_experience:"Experience", nav_capabilities:"Capabilities", nav_projects:"Projects", nav_research:"Research", nav_contact:"Contact",
+      status_available:"Available for work", curtain_text:"ESTABLISHING SECURE SESSION",
+      hero_stat_label:"Years of experience", hero_eyebrow:"Mannheim, Germany",
+      hero_role:"Cybersecurity Researcher — VAPT · Reverse Engineering · Applied ML",
+      hero_lede:"Four years hunting malware inside Android and iOS apps on <strong>Google Play Protect</strong> at Cognizant, plus VAPT work on real financial-sector infrastructure. Now an M.Sc. student in Applied Computer Science, pointing that same reverse-engineering instinct at machine learning for threat detection. ISC2 Certified in Cybersecurity.",
+      hero_isc2_chip:"ISC2 CC · issued 02/2026",
+      cap_kicker:"Capabilities",
+      cap1_title:"Security & VAPT", cap1_desc:"Reverse engineering, dynamic instrumentation, penetration testing, threat detection.",
+      cap2_title:"Malware & Reverse Engineering", cap2_desc:"Android/iOS app analysis at Google-Play-Protect scale — obfuscation & evasion detection.",
+      cap3_title:"Applied ML / AI", cap3_desc:"Model fine-tuning, threat classification, GenAI-assisted security tooling.",
+      cap4_title:"Cloud & Full-Stack", cap4_desc:"FastAPI/Node backends, React frontends, containerized delivery on GCP.",
+      exp_kicker:"Experience",
+      exp1_b1:"Worked within a 500+ member team to identify and eliminate malware across Android and iOS apps on the Google Play Store.",
+      exp1_b2:"Reverse-engineered APKs and analyzed obfuscated code with FRIDA and Objection to uncover malicious behavior, obfuscation, and evasion techniques.",
+      exp1_b3:"Developed patches for detection gaps, feeding false-positive/negative findings back into detection rules and pipeline logic.",
+      exp1_b4:"Collaborated with cross-functional QA and engineering teams to integrate secure coding practices into the app-vetting pipeline.",
+      exp2_b1:"Conducted reconnaissance, vulnerability scanning, and penetration testing on real-world infrastructure for financial institutions.",
+      exp2_b2:"Worked hands-on with Burp Suite, Metasploit, Nmap, and OWASP ZAP; applied FRIDA/Objection for mobile app reverse engineering.",
+      exp2_b3:"Contributed to detailed audit reports with actionable remediation steps for identified vulnerabilities.",
+      exp3_b1:"Security engineering role preceding the full-time Programmer Analyst position on the Play Protect program.",
+      proj_kicker:"Built With Purpose",
+      filter_all:"All", filter_platform:"Platform", filter_lab:"Lab", filter_dashboard:"Dashboard", filter_research:"Research", filter_repo:"Repo",
+      proj_toggle_label:"Technical breakdown",
+      proj1_title:"CyberGuard AI", proj1_desc:"A full-stack security intelligence platform pairing a FastAPI backend with a fine-tuned Gemini/Gemma stack for AI-assisted threat analysis.",
+      proj2_title:"APK Repackaging & Reverse Shell Injection", proj2_desc:"A controlled Metasploit lab that weaponizes a repackaged Android app for remote access, then maps the attack chain back to real, documented CVEs.", proj2_foot:"Mapped CVEs",
+      proj3_title:"Cyber Threat Intelligence Platform", proj3_desc:"A SOC dashboard for monitoring incoming traffic and scanning IPs/URLs for malicious activity, with a live attack-graph and honeypot capture built in.",
+      proj4_title:"Network Intrusion Detection System", proj4_desc:"An ML-based NIDS classifying network traffic as Normal or Malicious on the NSL-KDD dataset, served through a Streamlit prototype for live classification.",
+      proj4_jump:"Jump to the full research breakdown ↓",
+      proj5_title:"Infosec Starter Pack", proj5_desc:"A hands-on infosec learning repository built from both the offensive and defensive side of the same problems.",
+      research_kicker:"Research Spotlight", research_title:"Network Intrusion Detection Using Machine Learning",
+      research_sub:"M.Sc. Research Paper · SRH University of Applied Sciences, Heidelberg · Grade 1.2",
+      research_desc:"Built and evaluated an ML-based NIDS on the NSL-KDD dataset — six classifiers compared under 5-fold cross-validation, with a Streamlit prototype for interactive classification. Decision Tree came out on top (hover a stat for what it measures):",
+      stat_accuracy_title:"Share of all traffic samples classified correctly, normal or malicious.", stat_accuracy_label:"Accuracy",
+      stat_precision_title:"Of everything flagged malicious, the share that actually was.", stat_precision_label:"Precision",
+      stat_recall_title:"Of everything actually malicious, the share the model caught.", stat_recall_label:"Recall",
+      stat_rocauc_title:"Ability to rank malicious traffic above normal traffic across all thresholds; 1.0 is perfect, 0.5 is chance.", stat_rocauc_label:"ROC-AUC",
+      research_note:"Recall was treated as the metric to optimize for — in a security context, a missed attack (false negative) costs more than a false alarm.",
+      classifiers_label:"Classifiers compared (5-fold CV)", classifier_best:"Decision Tree ✓ best",
+      pub_kicker:"Publications",
+      pub1_title:"Blockchain Based Solution for Secured Transmission of Examination Paper",
+      pub1_desc:"Proposes a Blockchain + IPFS system for tamper-resistant, decentralized transmission of exam papers between examiners and invigilators, removing the security risks of physical circulation.",
+      pub1_venue:"2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing & Cyber Security (iSSSC) · co-authored",
+      pub2_title:"Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions",
+      pub2_desc:"Surveys the privacy and security risks posed by third-party browser extensions and the mitigation approaches available today.",
+      cred_kicker:"Credentials", cred_certifications:"Certifications", cred_education:"Education",
+      skills_kicker:"Toolset", skill_security:"Security", skill_ml:"Machine Learning / AI", skill_prog:"Programming Languages",
+      skill_spoken:"Spoken Languages", skill_web:"Web & Backend", skill_db:"Databases", skill_devops:"DevOps / Cloud",
+      contact_kicker:"Contact", contact_big:"Let's talk security.",
+      copy_btn:"copy", copy_btn_done:"copied",
+      mod_toggle_show_all:"Show all 9 modules ▾", mod_toggle_show_fewer:"Show fewer modules ▴"
+    },
+    de: {
+      nav_about:"Über mich", nav_experience:"Erfahrung", nav_capabilities:"Kompetenzen", nav_projects:"Projekte", nav_research:"Forschung", nav_contact:"Kontakt",
+      status_available:"Verfügbar für neue Projekte", curtain_text:"SICHERE VERBINDUNG WIRD AUFGEBAUT",
+      hero_stat_label:"Jahre Erfahrung", hero_eyebrow:"Mannheim, Deutschland",
+      hero_role:"Cybersecurity-Researcher — VAPT · Reverse Engineering · Angewandtes ML",
+      hero_lede:"Vier Jahre Malware-Jagd in Android- und iOS-Apps bei <strong>Google Play Protect</strong> im Auftrag von Cognizant, dazu VAPT-Arbeit an realer Infrastruktur im Finanzsektor. Jetzt M.Sc.-Student der Angewandten Informatik und wendet denselben Reverse-Engineering-Instinkt auf maschinelles Lernen zur Bedrohungserkennung an. ISC2-zertifiziert in Cybersecurity.",
+      hero_isc2_chip:"ISC2 CC · ausgestellt 02/2026",
+      cap_kicker:"Kompetenzen",
+      cap1_title:"Security & VAPT", cap1_desc:"Reverse Engineering, dynamische Instrumentierung, Penetrationstests, Bedrohungserkennung.",
+      cap2_title:"Malware & Reverse Engineering", cap2_desc:"Android-/iOS-App-Analyse im Maßstab von Google Play Protect — Erkennung von Verschleierung & Umgehungstechniken.",
+      cap3_title:"Angewandtes ML / KI", cap3_desc:"Modell-Fine-Tuning, Bedrohungsklassifizierung, GenAI-gestützte Security-Tools.",
+      cap4_title:"Cloud & Full-Stack", cap4_desc:"FastAPI-/Node-Backends, React-Frontends, containerisierte Bereitstellung auf GCP.",
+      exp_kicker:"Erfahrung",
+      exp1_b1:"Mitarbeit in einem Team mit über 500 Mitgliedern zur Erkennung und Beseitigung von Malware in Android- und iOS-Apps im Google Play Store.",
+      exp1_b2:"APKs reverse-engineered und verschleierten Code mit FRIDA und Objection analysiert, um bösartiges Verhalten, Verschleierung und Umgehungstechniken aufzudecken.",
+      exp1_b3:"Patches für Erkennungslücken entwickelt und Falsch-Positiv-/Falsch-Negativ-Befunde in Erkennungsregeln und Pipeline-Logik zurückgespielt.",
+      exp1_b4:"Zusammenarbeit mit funktionsübergreifenden QA- und Engineering-Teams zur Integration sicherer Programmierpraktiken in die App-Prüfungs-Pipeline.",
+      exp2_b1:"Durchführung von Recon, Schwachstellen-Scans und Penetrationstests an realer Infrastruktur für Finanzinstitute.",
+      exp2_b2:"Praktische Arbeit mit Burp Suite, Metasploit, Nmap und OWASP ZAP; Einsatz von FRIDA/Objection für Reverse Engineering mobiler Apps.",
+      exp2_b3:"Mitwirkung an detaillierten Audit-Berichten mit konkreten Maßnahmen zur Behebung identifizierter Schwachstellen.",
+      exp3_b1:"Security-Engineering-Rolle vor der Festanstellung als Programmer Analyst im Play-Protect-Programm.",
+      proj_kicker:"Mit Purpose gebaut",
+      filter_all:"Alle", filter_platform:"Plattform", filter_lab:"Lab", filter_dashboard:"Dashboard", filter_research:"Forschung", filter_repo:"Repo",
+      proj_toggle_label:"Technische Details",
+      proj1_title:"CyberGuard AI", proj1_desc:"Eine Full-Stack-Security-Intelligence-Plattform, die ein FastAPI-Backend mit einem feinabgestimmten Gemini/Gemma-Stack für KI-gestützte Bedrohungsanalyse kombiniert.",
+      proj2_title:"APK-Repackaging & Reverse-Shell-Injection", proj2_desc:"Ein kontrolliertes Metasploit-Lab, das eine neu gepackte Android-App für Fernzugriff bewaffnet und die Angriffskette anschließend realen, dokumentierten CVEs zuordnet.", proj2_foot:"Zugeordnete CVEs",
+      proj3_title:"Cyber Threat Intelligence Platform", proj3_desc:"Ein SOC-Dashboard zur Überwachung eingehenden Traffics und zum Scannen von IPs/URLs auf bösartige Aktivität, inklusive Live-Angriffsgraph und Honeypot-Capture.",
+      proj4_title:"Network Intrusion Detection System", proj4_desc:"Ein ML-basiertes NIDS, das Netzwerkverkehr im NSL-KDD-Datensatz als normal oder bösartig klassifiziert, bereitgestellt über einen Streamlit-Prototyp zur Live-Klassifizierung.",
+      proj4_jump:"Zur vollständigen Research-Aufschlüsselung springen ↓",
+      proj5_title:"Infosec Starter Pack", proj5_desc:"Ein praxisnahes Infosec-Lernrepository, das dieselben Probleme sowohl offensiv als auch defensiv beleuchtet.",
+      research_kicker:"Forschung im Fokus", research_title:"Netzwerk-Intrusion-Detection mittels Machine Learning",
+      research_sub:"M.Sc.-Forschungsarbeit · SRH Hochschule für angewandte Wissenschaften, Heidelberg · Note 1,2",
+      research_desc:"Ein ML-basiertes NIDS auf dem NSL-KDD-Datensatz entwickelt und evaluiert — sechs Klassifikatoren im Vergleich unter 5-facher Kreuzvalidierung, mit einem Streamlit-Prototyp zur interaktiven Klassifizierung. Decision Tree schnitt am besten ab (Kennzahl für Details überfahren):",
+      stat_accuracy_title:"Anteil aller Traffic-Samples, die korrekt klassifiziert wurden, normal oder bösartig.", stat_accuracy_label:"Accuracy",
+      stat_precision_title:"Von allem als bösartig markierten: der Anteil, der es tatsächlich war.", stat_precision_label:"Precision",
+      stat_recall_title:"Von allem tatsächlich Bösartigen: der Anteil, den das Modell erkannt hat.", stat_recall_label:"Recall",
+      stat_rocauc_title:"Fähigkeit, bösartigen Traffic über alle Schwellenwerte hinweg höher einzustufen als normalen; 1,0 ist perfekt, 0,5 ist Zufall.", stat_rocauc_label:"ROC-AUC",
+      research_note:"Recall wurde als die zu optimierende Kennzahl behandelt — im Security-Kontext kostet ein übersehener Angriff (False Negative) mehr als ein Fehlalarm.",
+      classifiers_label:"Verglichene Klassifikatoren (5-fache CV)", classifier_best:"Decision Tree ✓ beste",
+      pub_kicker:"Publikationen",
+      pub1_title:"Blockchain Based Solution for Secured Transmission of Examination Paper",
+      pub1_desc:"Schlägt ein Blockchain-+-IPFS-System für die manipulationssichere, dezentrale Übermittlung von Prüfungsunterlagen zwischen Prüfern und Aufsichtspersonen vor und beseitigt so die Sicherheitsrisiken der physischen Verteilung.",
+      pub1_venue:"2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing & Cyber Security (iSSSC) · Co-Autor",
+      pub2_title:"Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions",
+      pub2_desc:"Untersucht die Datenschutz- und Sicherheitsrisiken durch Drittanbieter-Browsererweiterungen sowie die heute verfügbaren Gegenmaßnahmen.",
+      cred_kicker:"Qualifikationen", cred_certifications:"Zertifizierungen", cred_education:"Ausbildung",
+      skills_kicker:"Toolset", skill_security:"Security", skill_ml:"Machine Learning / KI", skill_prog:"Programmiersprachen",
+      skill_spoken:"Sprachkenntnisse", skill_web:"Web & Backend", skill_db:"Datenbanken", skill_devops:"DevOps / Cloud",
+      contact_kicker:"Kontakt", contact_big:"Lass uns über Security sprechen.",
+      copy_btn:"kopieren", copy_btn_done:"kopiert",
+      mod_toggle_show_all:"Alle 9 Module anzeigen ▾", mod_toggle_show_fewer:"Weniger Module anzeigen ▴"
+    },
+    fr: {
+      nav_about:"À propos", nav_experience:"Expérience", nav_capabilities:"Compétences", nav_projects:"Projets", nav_research:"Recherche", nav_contact:"Contact",
+      status_available:"Disponible pour de nouvelles missions", curtain_text:"ÉTABLISSEMENT D'UNE SESSION SÉCURISÉE",
+      hero_stat_label:"Années d'expérience", hero_eyebrow:"Mannheim, Allemagne",
+      hero_role:"Chercheur en cybersécurité — VAPT · Rétro-ingénierie · ML appliqué",
+      hero_lede:"Quatre ans à traquer les malwares dans des applications Android et iOS chez <strong>Google Play Protect</strong> pour Cognizant, ainsi que des missions VAPT sur des infrastructures réelles du secteur financier. Aujourd'hui étudiant en master d'informatique appliquée, il applique ce même réflexe de rétro-ingénierie au machine learning pour la détection des menaces. Certifié ISC2 en cybersécurité.",
+      hero_isc2_chip:"ISC2 CC · délivré 02/2026",
+      cap_kicker:"Compétences",
+      cap1_title:"Sécurité & VAPT", cap1_desc:"Rétro-ingénierie, instrumentation dynamique, tests d'intrusion, détection des menaces.",
+      cap2_title:"Malware & rétro-ingénierie", cap2_desc:"Analyse d'applications Android/iOS à l'échelle de Google Play Protect — détection d'obfuscation et de techniques d'évasion.",
+      cap3_title:"ML appliqué / IA", cap3_desc:"Fine-tuning de modèles, classification des menaces, outils de sécurité assistés par IA générative.",
+      cap4_title:"Cloud & full-stack", cap4_desc:"Backends FastAPI/Node, frontends React, déploiement conteneurisé sur GCP.",
+      exp_kicker:"Expérience",
+      exp1_b1:"A travaillé au sein d'une équipe de plus de 500 personnes pour identifier et éliminer les malwares dans les applications Android et iOS du Google Play Store.",
+      exp1_b2:"A fait de la rétro-ingénierie sur des APK et analysé du code obfusqué avec FRIDA et Objection pour mettre au jour des comportements malveillants, de l'obfuscation et des techniques d'évasion.",
+      exp1_b3:"A développé des correctifs pour combler des lacunes de détection, en réinjectant les faux positifs/négatifs dans les règles de détection et la logique du pipeline.",
+      exp1_b4:"A collaboré avec des équipes QA et ingénierie transverses pour intégrer des pratiques de codage sécurisé dans le pipeline de validation des applications.",
+      exp2_b1:"A mené des missions de reconnaissance, de scan de vulnérabilités et de tests d'intrusion sur des infrastructures réelles d'institutions financières.",
+      exp2_b2:"A travaillé avec Burp Suite, Metasploit, Nmap et OWASP ZAP ; a utilisé FRIDA/Objection pour la rétro-ingénierie d'applications mobiles.",
+      exp2_b3:"A contribué à des rapports d'audit détaillés avec des mesures correctives concrètes pour les vulnérabilités identifiées.",
+      exp3_b1:"Poste d'ingénieur sécurité précédant le poste permanent de Programmer Analyst sur le programme Play Protect.",
+      proj_kicker:"Conçu avec un objectif",
+      filter_all:"Tout", filter_platform:"Plateforme", filter_lab:"Lab", filter_dashboard:"Dashboard", filter_research:"Recherche", filter_repo:"Repo",
+      proj_toggle_label:"Détails techniques",
+      proj1_title:"CyberGuard AI", proj1_desc:"Une plateforme full-stack de sécurité associant un backend FastAPI à une pile Gemini/Gemma affinée pour une analyse des menaces assistée par IA.",
+      proj2_title:"Repackaging d'APK & injection de reverse shell", proj2_desc:"Un laboratoire Metasploit contrôlé qui transforme une application Android repackagée en vecteur d'accès distant, puis relie la chaîne d'attaque à des CVE réelles et documentées.", proj2_foot:"CVE associées",
+      proj3_title:"Plateforme de renseignement sur les cybermenaces", proj3_desc:"Un tableau de bord SOC pour surveiller le trafic entrant et scanner des IP/URL à la recherche d'activité malveillante, avec un graphe d'attaque en direct et une capture par honeypot intégrée.",
+      proj4_title:"Système de détection d'intrusion réseau", proj4_desc:"Un NIDS basé sur le ML classant le trafic réseau comme normal ou malveillant sur le jeu de données NSL-KDD, exposé via un prototype Streamlit pour une classification en direct.",
+      proj4_jump:"Voir l'analyse complète de la recherche ↓",
+      proj5_title:"Infosec Starter Pack", proj5_desc:"Un dépôt d'apprentissage pratique en sécurité informatique, abordant les mêmes problématiques sous l'angle offensif et défensif.",
+      research_kicker:"Recherche à la une", research_title:"Détection d'intrusion réseau par machine learning",
+      research_sub:"Mémoire de master · SRH University of Applied Sciences, Heidelberg · Note 1,2",
+      research_desc:"Conception et évaluation d'un NIDS basé sur le ML sur le jeu de données NSL-KDD — six classifieurs comparés en validation croisée à 5 plis, avec un prototype Streamlit pour la classification interactive. Le Decision Tree arrive en tête (survolez une statistique pour voir ce qu'elle mesure) :",
+      stat_accuracy_title:"Part de l'ensemble des échantillons de trafic correctement classés, normaux ou malveillants.", stat_accuracy_label:"Accuracy",
+      stat_precision_title:"Parmi tout ce qui a été signalé comme malveillant, la part qui l'était réellement.", stat_precision_label:"Precision",
+      stat_recall_title:"Parmi tout ce qui était réellement malveillant, la part détectée par le modèle.", stat_recall_label:"Recall",
+      stat_rocauc_title:"Capacité à classer le trafic malveillant au-dessus du trafic normal quel que soit le seuil ; 1,0 est parfait, 0,5 est le hasard.", stat_rocauc_label:"ROC-AUC",
+      research_note:"Le recall a été retenu comme métrique à optimiser — dans un contexte de sécurité, une attaque manquée (faux négatif) coûte plus cher qu'une fausse alerte.",
+      classifiers_label:"Classifieurs comparés (CV à 5 plis)", classifier_best:"Decision Tree ✓ meilleur",
+      pub_kicker:"Publications",
+      pub1_title:"Blockchain Based Solution for Secured Transmission of Examination Paper",
+      pub1_desc:"Propose un système Blockchain + IPFS pour une transmission décentralisée et infalsifiable des copies d'examen entre examinateurs et surveillants, supprimant les risques de sécurité liés à la circulation physique.",
+      pub1_venue:"2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing & Cyber Security (iSSSC) · co-auteur",
+      pub2_title:"Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions",
+      pub2_desc:"Passe en revue les risques de confidentialité et de sécurité posés par les extensions de navigateur tierces et les solutions de mitigation existantes.",
+      cred_kicker:"Qualifications", cred_certifications:"Certifications", cred_education:"Formation",
+      skills_kicker:"Boîte à outils", skill_security:"Sécurité", skill_ml:"Machine learning / IA", skill_prog:"Langages de programmation",
+      skill_spoken:"Langues parlées", skill_web:"Web & backend", skill_db:"Bases de données", skill_devops:"DevOps / Cloud",
+      contact_kicker:"Contact", contact_big:"Parlons sécurité.",
+      copy_btn:"copier", copy_btn_done:"copié",
+      mod_toggle_show_all:"Afficher les 9 modules ▾", mod_toggle_show_fewer:"Afficher moins de modules ▴"
+    },
+    es: {
+      nav_about:"Sobre mí", nav_experience:"Experiencia", nav_capabilities:"Capacidades", nav_projects:"Proyectos", nav_research:"Investigación", nav_contact:"Contacto",
+      status_available:"Disponible para nuevos proyectos", curtain_text:"ESTABLECIENDO SESIÓN SEGURA",
+      hero_stat_label:"Años de experiencia", hero_eyebrow:"Mannheim, Alemania",
+      hero_role:"Investigador en ciberseguridad — VAPT · Ingeniería inversa · ML aplicado",
+      hero_lede:"Cuatro años cazando malware en apps Android e iOS dentro de <strong>Google Play Protect</strong> para Cognizant, además de trabajo de VAPT sobre infraestructura real del sector financiero. Actualmente estudiante de máster en Informática Aplicada, aplicando ese mismo instinto de ingeniería inversa al machine learning para la detección de amenazas. Certificado ISC2 en Ciberseguridad.",
+      hero_isc2_chip:"ISC2 CC · emitido 02/2026",
+      cap_kicker:"Capacidades",
+      cap1_title:"Seguridad y VAPT", cap1_desc:"Ingeniería inversa, instrumentación dinámica, pruebas de penetración, detección de amenazas.",
+      cap2_title:"Malware e ingeniería inversa", cap2_desc:"Análisis de apps Android/iOS a la escala de Google Play Protect — detección de ofuscación y técnicas de evasión.",
+      cap3_title:"ML aplicado / IA", cap3_desc:"Ajuste fino de modelos, clasificación de amenazas, herramientas de seguridad asistidas por IA generativa.",
+      cap4_title:"Cloud y full-stack", cap4_desc:"Backends en FastAPI/Node, frontends en React, despliegue en contenedores sobre GCP.",
+      exp_kicker:"Experiencia",
+      exp1_b1:"Formó parte de un equipo de más de 500 personas dedicado a identificar y eliminar malware en apps Android e iOS de Google Play Store.",
+      exp1_b2:"Realizó ingeniería inversa de APKs y analizó código ofuscado con FRIDA y Objection para descubrir comportamiento malicioso, ofuscación y técnicas de evasión.",
+      exp1_b3:"Desarrolló parches para cubrir huecos de detección, retroalimentando hallazgos de falsos positivos/negativos en las reglas de detección y en la lógica del pipeline.",
+      exp1_b4:"Colaboró con equipos multifuncionales de QA e ingeniería para integrar prácticas de codificación segura en el pipeline de validación de apps.",
+      exp2_b1:"Realizó reconocimiento, escaneo de vulnerabilidades y pruebas de penetración sobre infraestructura real de instituciones financieras.",
+      exp2_b2:"Trabajó directamente con Burp Suite, Metasploit, Nmap y OWASP ZAP; aplicó FRIDA/Objection para ingeniería inversa de apps móviles.",
+      exp2_b3:"Contribuyó a informes de auditoría detallados con pasos de remediación concretos para las vulnerabilidades identificadas.",
+      exp3_b1:"Rol de ingeniería de seguridad previo al puesto fijo de Programmer Analyst en el programa Play Protect.",
+      proj_kicker:"Construido con propósito",
+      filter_all:"Todos", filter_platform:"Plataforma", filter_lab:"Lab", filter_dashboard:"Dashboard", filter_research:"Investigación", filter_repo:"Repo",
+      proj_toggle_label:"Detalles técnicos",
+      proj1_title:"CyberGuard AI", proj1_desc:"Una plataforma full-stack de inteligencia de seguridad que combina un backend en FastAPI con una pila Gemini/Gemma afinada para análisis de amenazas asistido por IA.",
+      proj2_title:"Reempaquetado de APK e inyección de reverse shell", proj2_desc:"Un laboratorio controlado con Metasploit que arma una app Android reempaquetada para acceso remoto y luego mapea la cadena de ataque a CVEs reales y documentadas.", proj2_foot:"CVEs mapeadas",
+      proj3_title:"Plataforma de inteligencia de ciberamenazas", proj3_desc:"Un dashboard de SOC para monitorizar tráfico entrante y escanear IPs/URLs en busca de actividad maliciosa, con un grafo de ataque en vivo y captura mediante honeypot integrada.",
+      proj4_title:"Sistema de detección de intrusiones en red", proj4_desc:"Un NIDS basado en ML que clasifica el tráfico de red como normal o malicioso sobre el dataset NSL-KDD, servido mediante un prototipo en Streamlit para clasificación en vivo.",
+      proj4_jump:"Ir al desglose completo de la investigación ↓",
+      proj5_title:"Infosec Starter Pack", proj5_desc:"Un repositorio práctico de aprendizaje en seguridad informática, construido abordando los mismos problemas desde el lado ofensivo y el defensivo.",
+      research_kicker:"Investigación destacada", research_title:"Detección de intrusiones en red mediante machine learning",
+      research_sub:"Trabajo de investigación de máster · SRH University of Applied Sciences, Heidelberg · Nota 1,2",
+      research_desc:"Se construyó y evaluó un NIDS basado en ML sobre el dataset NSL-KDD — seis clasificadores comparados con validación cruzada de 5 pliegues, con un prototipo en Streamlit para clasificación interactiva. Decision Tree obtuvo el mejor resultado (pasa el cursor sobre una estadística para ver qué mide):",
+      stat_accuracy_title:"Proporción de todas las muestras de tráfico clasificadas correctamente, normales o maliciosas.", stat_accuracy_label:"Accuracy",
+      stat_precision_title:"De todo lo marcado como malicioso, la proporción que realmente lo era.", stat_precision_label:"Precision",
+      stat_recall_title:"De todo lo que realmente era malicioso, la proporción que el modelo detectó.", stat_recall_label:"Recall",
+      stat_rocauc_title:"Capacidad de clasificar el tráfico malicioso por encima del normal en todos los umbrales; 1,0 es perfecto, 0,5 es azar.", stat_rocauc_label:"ROC-AUC",
+      research_note:"Se priorizó el recall como métrica a optimizar — en un contexto de seguridad, un ataque no detectado (falso negativo) cuesta más que una falsa alarma.",
+      classifiers_label:"Clasificadores comparados (CV de 5 pliegues)", classifier_best:"Decision Tree ✓ mejor",
+      pub_kicker:"Publicaciones",
+      pub1_title:"Blockchain Based Solution for Secured Transmission of Examination Paper",
+      pub1_desc:"Propone un sistema de Blockchain + IPFS para la transmisión descentralizada y a prueba de manipulaciones de exámenes entre examinadores y vigilantes, eliminando los riesgos de seguridad de la circulación física.",
+      pub1_venue:"2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing & Cyber Security (iSSSC) · coautor",
+      pub2_title:"Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions",
+      pub2_desc:"Analiza los riesgos de privacidad y seguridad que plantean las extensiones de navegador de terceros y las soluciones de mitigación disponibles hoy.",
+      cred_kicker:"Credenciales", cred_certifications:"Certificaciones", cred_education:"Formación",
+      skills_kicker:"Herramientas", skill_security:"Seguridad", skill_ml:"Machine learning / IA", skill_prog:"Lenguajes de programación",
+      skill_spoken:"Idiomas", skill_web:"Web y backend", skill_db:"Bases de datos", skill_devops:"DevOps / Cloud",
+      contact_kicker:"Contacto", contact_big:"Hablemos de seguridad.",
+      copy_btn:"copiar", copy_btn_done:"copiado",
+      mod_toggle_show_all:"Mostrar los 9 módulos ▾", mod_toggle_show_fewer:"Mostrar menos módulos ▴"
+    },
+    hi: {
+      nav_about:"परिचय", nav_experience:"अनुभव", nav_capabilities:"क्षमताएं", nav_projects:"प्रोजेक्ट्स", nav_research:"शोध", nav_contact:"संपर्क",
+      status_available:"नए काम के लिए उपलब्ध", curtain_text:"सुरक्षित सत्र स्थापित किया जा रहा है",
+      hero_stat_label:"वर्षों का अनुभव", hero_eyebrow:"मैनहाइम, जर्मनी",
+      hero_role:"साइबरसिक्योरिटी रिसर्चर — VAPT · रिवर्स इंजीनियरिंग · एप्लाइड ML",
+      hero_lede:"Cognizant में <strong>Google Play Protect</strong> के लिए Android और iOS ऐप्स में मैलवेयर खोजते हुए चार साल, साथ ही वित्तीय क्षेत्र के वास्तविक इन्फ्रास्ट्रक्चर पर VAPT कार्य। अब Applied Computer Science में M.Sc. के छात्र, उसी रिवर्स-इंजीनियरिंग सूझबूझ को थ्रेट डिटेक्शन के लिए मशीन लर्निंग पर लागू कर रहे हैं। ISC2 Certified in Cybersecurity.",
+      hero_isc2_chip:"ISC2 CC · जारी 02/2026",
+      cap_kicker:"क्षमताएं",
+      cap1_title:"सिक्योरिटी और VAPT", cap1_desc:"रिवर्स इंजीनियरिंग, डायनामिक इंस्ट्रूमेंटेशन, पेनिट्रेशन टेस्टिंग, थ्रेट डिटेक्शन।",
+      cap2_title:"मैलवेयर और रिवर्स इंजीनियरिंग", cap2_desc:"Google Play Protect पैमाने पर Android/iOS ऐप विश्लेषण — ऑब्फ्स्केशन और इवेज़न डिटेक्शन।",
+      cap3_title:"एप्लाइड ML / AI", cap3_desc:"मॉडल फाइन-ट्यूनिंग, थ्रेट क्लासिफिकेशन, GenAI-सहायित सिक्योरिटी टूलिंग।",
+      cap4_title:"क्लाउड और फुल-स्टैक", cap4_desc:"FastAPI/Node बैकएंड, React फ्रंटएंड, GCP पर कंटेनराइज़्ड डिलीवरी।",
+      exp_kicker:"अनुभव",
+      exp1_b1:"Google Play Store पर Android और iOS ऐप्स में मैलवेयर की पहचान और उन्मूलन के लिए 500+ सद्स्यों की टीम के साथ काम किया।",
+      exp1_b2:"दुर्भावनापूर्ण व्यवहार, ऑब्फ्स्केशन और इवेज़न तकनीकों को उजागर करने के लिए APK को रिवर्स-इंजीनियर किया और FRIDA व Objection के साथ ऑब्फ्स्केटेड कोड का विश्लेषण किया।",
+      exp1_b3:"डिटेक्शन गैप्स के लिए पैच विकसित किए और फ़ॉल्स-पॉज़िटिव/नेगेटिव निष्कर्षों को डिटेक्शन नियमों और पाइपलाइन लॉजिक में वापस भेजा।",
+      exp1_b4:"ऐप-वेटिंग पाइपलाइन में सुरक्षित कोडिंग प्रथाओं को एकीकृत करने के लिए क्रॉस-फ़ंक्शनल QA और इंजीनियरिंग टीमों के साथ सहयोग किया।",
+      exp2_b1:"वित्तीय संस्थानों के वास्तविक इन्फ्रास्ट्रक्चर पर रीकॉनेसेंस, वल्नरेबिलिटी स्कैनिंग और पेनिट्रेशन टेस्टिंग की।",
+      exp2_b2:"Burp Suite, Metasploit, Nmap और OWASP ZAP के साथ प्रत्यक्ष कार्य किया; मोबाइल ऐप रिवर्स इंजीनियरिंग के लिए FRIDA/Objection लागू किया।",
+      exp2_b3:"पहचानी गई कमज़ोरियों के लिए कार्रवाई-योग्य समाधान सुझावों सहित विस्तृत ऑडिट रिपोर्ट में योगदान दिया।",
+      exp3_b1:"Play Protect प्रोग्राम में पूर्णकालिक Programmer Analyst पद से पहले की सिक्योरिटी इंजीनियरिंग भूमिका।",
+      proj_kicker:"उद्देश्य के साथ बनाया गया",
+      filter_all:"सभी", filter_platform:"प्लेटफ़ॉर्म", filter_lab:"लैब", filter_dashboard:"डैशबोर्ड", filter_research:"शोध", filter_repo:"रेपो",
+      proj_toggle_label:"तकनीकी विवरण",
+      proj1_title:"CyberGuard AI", proj1_desc:"एक फ़ुल-स्टैक सिक्योरिटी इंटेलिजेंस प्लेटफ़ॉर्म जो AI-सहायित थ्रेट एनालिसिस के लिए FastAPI बैकएंड को फ़ाइन-ट्यून किए गए Gemini/Gemma स्टैक के साथ जोड़ता है।",
+      proj2_title:"APK रीपैकेजिंग और रिवर्स शेल इंजेक्शन", proj2_desc:"एक नियंत्रित Metasploit लैब जो रिमोट एक्सेस के लिए एक रीपैकेज्ड Android ऐप को हथियार बनाती है, फ़िर अटैक चेन को वास्तविक, प्रलेखित CVEs से जोड़ती है।", proj2_foot:"मैप की गई CVEs",
+      proj3_title:"साइबर थ्रेट इंटेलिजेंस प्लेटफ़ॉर्म", proj3_desc:"आने वाले ट्रैफ़िक की निगरानी और दुर्भावनापूर्ण गतिविधि के लिए IPs/URLs स्कैन करने हेतु एक SOC डैशबोर्ड, जिसमें लाइव अटैक-ग्राफ़़ और हनीपॉट कैप्चर शामिल है।",
+      proj4_title:"नेटवर्क इंट्रूज़़न डिटेक्शन सिस्टम", proj4_desc:"एक ML-आधारित NIDS जो NSL-KDD डेटासेट पर नेटवर्क ट्रैफ़िक को सामान्य या दुर्भावनापूर्ण के रूप में वर्गीकृत करता है, जिसे लाइव क्लासिफ़िकेशन के लिए एक Streamlit प्रोटोटाइप के माध्यम से प्रस्तुत किया गया है।",
+      proj4_jump:"पूरा रिसर्च ब्रेकडाउन देखें ↓",
+      proj5_title:"Infosec Starter Pack", proj5_desc:"एक हैंड्स-ऑन इन्फ़ोसेक लर्निंग रिपॉज़़िटरी, जो एक ही समस्याओं को आक्रामक और रक्षात्मक — दोनों दृष्टिकोणों से देखती है।",
+      research_kicker:"शोध स्पॉटलाइट", research_title:"मशीन लर्निंग का उपयोग कर नेटवर्क इंट्रूज़़न डिटेक्शन",
+      research_sub:"M.Sc. रिसर्च पेपर · SRH University of Applied Sciences, Heidelberg · ग्रेड 1.2",
+      research_desc:"NSL-KDD डेटासेट पर एक ML-आधारित NIDS बनाया और मूल्यांकित किया — 5-फ़ोल्ड क्रॉस-वैलिडेशन के तहत छह क्लासिफ़ायर्स की तुलना की गई, साथ ही इंटरैक्टिव क्लासिफ़िकेशन के लिए एक Streamlit प्रोटोटाइप भी। Decision Tree सबसे आगे रहा (यह क्या मापता है, यह देखने के लिए किसी आँकड़े पर होवर करें):",
+      stat_accuracy_title:"सभी ट्रैफ़िक सैंपलों में से, सही ढ़ंग से वर्गीकृत — सामान्य या दुर्भावनापूर्ण — का हिस्सा।", stat_accuracy_label:"Accuracy",
+      stat_precision_title:"दुर्भावनापूर्ण के रूप में फ़्लैग किए गए सभी में से, जो वास्तव में थे उनका हिस्सा।", stat_precision_label:"Precision",
+      stat_recall_title:"वास्तव में दुर्भावनापूर्ण सभी में से, मॉडल द्वारा पकड़े गए का हिस्सा।", stat_recall_label:"Recall",
+      stat_rocauc_title:"सभी थ्रेशहोल्ड्स पर सामान्य ट्रैफ़िक से ऊपर दुर्भावनापूर्ण ट्रैफ़िक को रैंक करने की क्षमता; 1.0 सटीक है, 0.5 संयोग है।", stat_rocauc_label:"ROC-AUC",
+      research_note:"Recall को अनुकूलित करने योग्य मेट्रिक माना गया — सिक्योरिटी के संदर्भ में, छूटा हुआ हमला (फ़ॉल्स नेगेटिव) झूठे अलार्म से अधिक महंगा पड़ता है।",
+      classifiers_label:"तुलना किए गए क्लासिफ़ायर्स (5-फ़ोल्ड CV)", classifier_best:"Decision Tree ✓ सर्वश्रेष्ठ",
+      pub_kicker:"प्रकाशन",
+      pub1_title:"Blockchain Based Solution for Secured Transmission of Examination Paper",
+      pub1_desc:"परीक्षकों और निरीक्षकों के बीच परीक्षा पत्रों के छेड़छाड़-रोधी, विकेंद्रीकृत प्रसारण के लिए एक Blockchain + IPFS प्रणाली प्रस्तावित करता है, जो भौतिक प्रसार के सुरक्षा जोखिमों को समाप्त करती है।",
+      pub1_venue:"2022 IEEE 2nd Int'l Symposium on Sustainable Energy, Signal Processing & Cyber Security (iSSSC) · सह-लेखक",
+      pub2_title:"Building Customized Browser Extension: Outlining the Risks and Existing Solutions for Third-Party Extensions",
+      pub2_desc:"थर्ड-पार्टी ब्राउज़़र एक्सटेंशन से उत्पन्न प्राइवेसी और सिक्योरिटी जोखिमों तथा आज उपलब्ध समाधानों का सर्वेक्षण करता है।",
+      cred_kicker:"प्रमाणपत्र", cred_certifications:"सर्टिफ़िकेशन", cred_education:"शिक्षा",
+      skills_kicker:"टूलसेट", skill_security:"सिक्योरिटी", skill_ml:"मशीन लर्निंग / AI", skill_prog:"प्रोग्रामिंग भाषाएं",
+      skill_spoken:"बोली जाने वाली भाषाएं", skill_web:"वेब और बैकएंड", skill_db:"डेटाबेस", skill_devops:"DevOps / क्लाउड",
+      contact_kicker:"संपर्क", contact_big:"चलिए सिक्योरिटी पर बात करते हैं।",
+      copy_btn:"कॉपी करें", copy_btn_done:"कॉपी हो गया",
+      mod_toggle_show_all:"सभी 9 मॉड्यूल दिखाएं ▾", mod_toggle_show_fewer:"कम मॉड्यूल दिखाएं ▴"
+    }
+  };
 
-  // Year
-  document.getElementById("year").textContent = new Date().getFullYear();
-
-  // Mobile menu
-  const toggle = document.querySelector(".navToggle");
-  const links = document.querySelector("[data-nav-links]");
-  if (toggle && links) {
-    toggle.addEventListener("click", () => {
-      const open = links.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", String(open));
+  var currentLang = 'en';
+  function applyLanguage(lang){
+    var dict = I18N[lang] ? I18N[lang] : I18N.en;
+    currentLang = I18N[lang] ? lang : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(dict[key] != null) el.textContent = dict[key];
     });
-    links.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
-      links.classList.remove("open");
-      toggle.setAttribute("aria-expanded","false");
-    }));
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-html');
+      if(dict[key] != null) el.innerHTML = dict[key];
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-title');
+      if(dict[key] != null) el.setAttribute('title', dict[key]);
+    });
+    document.documentElement.setAttribute('lang', currentLang);
+    try{ localStorage.setItem('portfolio_lang', currentLang); }catch(e){}
+    if(typeof rewrapLede === 'function') rewrapLede();
+    if(typeof refreshModToggleText === 'function') refreshModToggleText();
   }
 
-  // Scroll reveal
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => e.isIntersecting && e.target.classList.add("in"));
-  }, { threshold: 0.12 });
-  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  var langSelect = document.getElementById('langSelect');
+  var savedLang = null;
+  try{ savedLang = localStorage.getItem('portfolio_lang'); }catch(e){}
+  var initialLang = (savedLang && I18N[savedLang]) ? savedLang : 'en';
+  if(langSelect) langSelect.value = initialLang;
+  applyLanguage(initialLang);
+  if(langSelect){
+    langSelect.addEventListener('change', function(){
+      applyLanguage(langSelect.value);
+    });
+  }
 
-  // Back to top button
-  const topBtn = document.querySelector(".backTop");
-  window.addEventListener("scroll", () => {
-    topBtn.classList.toggle("show", window.scrollY > 600);
-  });
+  // ---------- ambient background network ----------
+  (function initBgNetwork(){
+    var canvas = document.getElementById('bgcanvas');
+    if(!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W, H, nodes = [];
+    var NODE_COUNT = 70;
 
-  // Active nav link
-  const sectionIds = ["projects","experience","contact"];
-  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-  function setActive(){
-    const y = window.scrollY + 140;
-    let current = null;
-    for (const s of sections) if (s.offsetTop <= y) current = s;
-    document.querySelectorAll(".nav-links a").forEach(a => a.classList.remove("active"));
-    if (current){
-      const a = document.querySelector(`.nav-links a[href="#${current.id}"]`);
-      if (a) a.classList.add("active");
+    function size(){
+      W = window.innerWidth; H = window.innerHeight;
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function initNodes(){
+      nodes = [];
+      for(var n = 0; n < NODE_COUNT; n++){
+        nodes.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.14,
+          vy: (Math.random() - 0.5) * 0.14,
+          flagged: Math.random() < 0.08
+        });
+      }
+    }
+
+    function draw(){
+      ctx.clearRect(0, 0, W, H);
+      for(var i = 0; i < nodes.length; i++){
+        for(var j = i + 1; j < nodes.length; j++){
+          var a = nodes[i], b = nodes[j];
+          var dx = a.x - b.x, dy = a.y - b.y;
+          var d = Math.sqrt(dx * dx + dy * dy);
+          if(d < 150){
+            ctx.strokeStyle = 'rgba(79,227,193,' + (0.1 * (1 - d / 150)) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+      for(var k = 0; k < nodes.length; k++){
+        var node = nodes[k];
+        ctx.beginPath();
+        ctx.fillStyle = node.flagged ? 'rgba(255,107,87,0.5)' : 'rgba(79,227,193,0.4)';
+        ctx.arc(node.x, node.y, node.flagged ? 2.6 : 1.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function step(){
+      for(var i = 0; i < nodes.length; i++){
+        var n = nodes[i];
+        n.x += n.vx; n.y += n.vy;
+        if(n.x < 0 || n.x > W) n.vx *= -1;
+        if(n.y < 0 || n.y > H) n.vy *= -1;
+      }
+      draw();
+      if(!reduced) requestAnimationFrame(step);
+    }
+
+    size();
+    initNodes();
+    if(reduced){ draw(); } else { step(); }
+
+    var resizeTimer;
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){ size(); initNodes(); draw(); }, 150);
+    });
+  })();
+
+  // ---------- boot curtain ----------
+  var curtain = document.getElementById('curtain');
+  if(curtain){
+    if(reduced){
+      curtain.style.display = 'none';
+    } else {
+      setTimeout(function(){ curtain.classList.add('hide'); }, 2500);
+      curtain.addEventListener('transitionend', function(){ curtain.style.display = 'none'; });
     }
   }
-  window.addEventListener("scroll", setActive, { passive:true });
-  setActive();
+
+  // ---------- custom cursor ----------
+  if(!reduced && finePointer){
+    document.body.classList.add('custom-cursor');
+    var cDot = document.getElementById('cursorDot');
+    var cRing = document.getElementById('cursorRing');
+    var mx = window.innerWidth/2, my = window.innerHeight/2, rx = mx, ry = my;
+    window.addEventListener('mousemove', function(e){
+      mx = e.clientX; my = e.clientY;
+      if(cDot){ cDot.style.left = mx + 'px'; cDot.style.top = my + 'px'; }
+    });
+    (function ringLoop(){
+      rx += (mx - rx) * 0.18;
+      ry += (my - ry) * 0.18;
+      if(cRing){ cRing.style.left = rx + 'px'; cRing.style.top = ry + 'px'; }
+      requestAnimationFrame(ringLoop);
+    })();
+    document.querySelectorAll('a, button, .proj-card, .cap-row').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ if(cRing) cRing.classList.add('hover'); });
+      el.addEventListener('mouseleave', function(){ if(cRing) cRing.classList.remove('hover'); });
+    });
+  }
+
+  // ---------- scroll progress ----------
+  var scrollbar = document.getElementById('scrollbar');
+  function updateScrollbar(){
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - doc.clientHeight;
+    scrollbar.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + '%';
+  }
+  window.addEventListener('scroll', updateScrollbar, {passive:true});
+  updateScrollbar();
+
+  // ---------- hero name: per-letter reveal ----------
+  var nameEl = document.querySelector('h1.name');
+  if(nameEl && !reduced){
+    var frag = document.createDocumentFragment();
+    var delay = 0;
+    Array.prototype.forEach.call(nameEl.childNodes, function(node){
+      if(node.nodeType === 3){
+        node.textContent.split('').forEach(function(ch){
+          var span = document.createElement('span');
+          span.className = 'ch';
+          span.style.animationDelay = delay + 'ms';
+          span.textContent = (ch === ' ') ? ' ' : ch;
+          frag.appendChild(span);
+          delay += 55;
+        });
+      } else {
+        frag.appendChild(node.cloneNode(true));
+      }
+    });
+    nameEl.innerHTML = '';
+    nameEl.appendChild(frag);
+  }
+
+  // ---------- hero name: scroll-scrub fade/blur as hero scrolls away ----------
+  var heroEl = document.querySelector('.hero');
+  var cornerStatEl = document.getElementById('heroCornerStat');
+  if(nameEl && heroEl && !reduced){
+    var nameTicking = false;
+    function updateHeroScrub(){
+      var rect = heroEl.getBoundingClientRect();
+      var p = (-rect.top) / (rect.height * 0.6);
+      p = Math.max(0, Math.min(1, p));
+      nameEl.style.opacity = (1 - p).toFixed(2);
+      nameEl.style.filter = 'blur(' + (p * 6).toFixed(1) + 'px)';
+      nameEl.style.transform = 'translateY(' + (p * 36).toFixed(1) + 'px)';
+      if(cornerStatEl){
+        var statP = Math.min(window.scrollY / 70, 1);
+        cornerStatEl.style.opacity = (1 - statP).toFixed(2);
+      }
+      nameTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!nameTicking){ requestAnimationFrame(updateHeroScrub); nameTicking = true; }
+    }, {passive:true});
+    window.addEventListener('resize', updateHeroScrub);
+    updateHeroScrub();
+  }
+
+  // ---------- scroll-scrub word brighten (lede) ----------
+  function wrapScrubWords(el){
+    Array.prototype.slice.call(el.childNodes).forEach(function(node){
+      if(node.nodeType === 3){
+        var frag = document.createDocumentFragment();
+        node.textContent.split(/(\s+)/).forEach(function(part){
+          if(part.trim() === ''){ frag.appendChild(document.createTextNode(part)); }
+          else {
+            var s = document.createElement('span');
+            s.className = 'sw';
+            s.textContent = part;
+            frag.appendChild(s);
+          }
+        });
+        el.replaceChild(frag, node);
+      } else if(node.nodeType === 1){
+        wrapScrubWords(node);
+      }
+    });
+  }
+  var scrubEl = document.querySelector('.lede');
+  if(scrubEl && !reduced){
+    wrapScrubWords(scrubEl);
+    var scrubWords = scrubEl.querySelectorAll('.sw');
+    var ticking = false;
+    function updateScrub(){
+      var vh = window.innerHeight;
+      var start = vh * 0.92, end = vh * 0.42;
+      scrubWords.forEach(function(w){
+        var r = w.getBoundingClientRect();
+        var center = r.top + r.height/2;
+        var p = (start - center) / (start - end);
+        p = Math.max(0, Math.min(1, p));
+        w.style.opacity = (0.35 + p*0.65).toFixed(2);
+        w.classList.toggle('in-view', p > 0.6);
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', function(){
+      if(!ticking){ requestAnimationFrame(updateScrub); ticking = true; }
+    }, {passive:true});
+    window.addEventListener('resize', updateScrub);
+    updateScrub();
+  }
+  function rewrapLede(){
+    if(!scrubEl || reduced) return;
+    wrapScrubWords(scrubEl);
+    scrubWords = scrubEl.querySelectorAll('.sw');
+    if(typeof updateScrub === 'function') updateScrub();
+  }
+
+  // ---------- scroll-reveal (generic) ----------
+  var revealTargets = document.querySelectorAll(
+    '.kicker, .log-entry, #projects .filter-bar, .proj-card, .research-box, .quote-card, .cred-col, .skill-group, .contact-links'
+  );
+  revealTargets.forEach(function(el, i){
+    el.classList.add('reveal');
+    el.style.transitionDelay = (Math.min(i % 5, 4) * 70) + 'ms';
+  });
+  if(reduced || !('IntersectionObserver' in window)){
+    revealTargets.forEach(function(el){ el.classList.add('in-view'); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+      });
+    }, {threshold:0.12, rootMargin:'0px 0px -60px 0px'});
+    revealTargets.forEach(function(el){ io.observe(el); });
+  }
+
+  // ---------- pill nav: active state + sliding indicator ----------
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.pillnav a'));
+  var navSections = navLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  var pillIndicator = document.getElementById('pillIndicator');
+  var pillNavEl = document.getElementById('pillNav');
+
+  function moveIndicator(link){
+    if(!pillIndicator || !link || !pillNavEl) return;
+    var navRect = pillNavEl.getBoundingClientRect();
+    var linkRect = link.getBoundingClientRect();
+    pillIndicator.style.left = (linkRect.left - navRect.left) + 'px';
+    pillIndicator.style.width = linkRect.width + 'px';
+  }
+
+  var currentActive = navLinks[0];
+  if(currentActive) requestAnimationFrame(function(){ moveIndicator(currentActive); });
+
+  if('IntersectionObserver' in window && navSections.length){
+    var navIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        var link = navLinks.find(function(a){ return a.getAttribute('href') === '#' + entry.target.id; });
+        if(!link) return;
+        if(entry.isIntersecting){
+          navLinks.forEach(function(a){ a.classList.remove('active'); });
+          link.classList.add('active');
+          currentActive = link;
+          moveIndicator(link);
+        }
+      });
+    }, {rootMargin:'-40% 0px -50% 0px'});
+    navSections.forEach(function(sec){ navIo.observe(sec); });
+  }
+  navLinks.forEach(function(link){ link.addEventListener('mouseenter', function(){ moveIndicator(link); }); });
+  if(pillNavEl){ pillNavEl.addEventListener('mouseleave', function(){ if(currentActive) moveIndicator(currentActive); }); }
+  window.addEventListener('resize', function(){ if(currentActive) moveIndicator(currentActive); });
+
+  // ---------- capabilities: hover preview follows cursor ----------
+  var capPreview = document.getElementById('capPreview');
+  if(!coarsePointer){
+    document.querySelectorAll('.cap-row').forEach(function(row){
+      row.addEventListener('mousemove', function(e){
+        if(!capPreview) return;
+        capPreview.style.left = e.clientX + 'px';
+        capPreview.style.top = e.clientY + 'px';
+        capPreview.innerHTML = '<b>Toolchain</b>' + row.getAttribute('data-preview');
+        capPreview.classList.add('show');
+      });
+      row.addEventListener('mouseleave', function(){ if(capPreview) capPreview.classList.remove('show'); });
+    });
+  }
+
+  // ---------- magnetic buttons ----------
+  if(!reduced && !coarsePointer){
+    document.querySelectorAll('.filter-btn, .proj-toggle, .copy-btn').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var mmx = e.clientX - (r.left + r.width/2);
+        var mmy = e.clientY - (r.top + r.height/2);
+        el.style.transform = 'translate(' + (mmx*0.18) + 'px,' + (mmy*0.35) + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){ el.style.transform = ''; });
+    });
+  }
+
+  // ---------- project card cursor-tilt ----------
+  if(!reduced && !coarsePointer){
+    document.querySelectorAll('#projects .proj-card').forEach(function(card){
+      card.style.transformStyle = 'preserve-3d';
+      card.addEventListener('mousemove', function(e){
+        var r = card.getBoundingClientRect();
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transition = 'none';
+        card.style.transform = 'perspective(800px) rotateX(' + (py*-6) + 'deg) rotateY(' + (px*8) + 'deg) translateY(-3px)';
+      });
+      card.addEventListener('mouseleave', function(){
+        card.style.transition = 'transform .5s cubic-bezier(.2,.7,.3,1)';
+        card.style.transform = '';
+      });
+    });
+  }
+
+  // ---------- stat count-up ----------
+  var statTiles = document.querySelectorAll('.stat-num');
+  function animateStat(el){
+    var raw = el.textContent.trim();
+    var match = raw.match(/^([\d.]+)(.*)$/);
+    if(!match) return;
+    var target = parseFloat(match[1]);
+    var suffix = match[2];
+    var decimals = (match[1].split('.')[1] || '').length;
+    var start = null, duration = 1100;
+    function frame(ts){
+      if(start === null) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals) + suffix;
+      if(p < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toFixed(decimals) + suffix;
+    }
+    requestAnimationFrame(frame);
+  }
+  if(statTiles.length && !reduced && 'IntersectionObserver' in window){
+    var statIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ animateStat(entry.target); statIo.unobserve(entry.target); }
+      });
+    }, {threshold:0.5});
+    statTiles.forEach(function(el){ statIo.observe(el); });
+  }
+
+  // ---------- projects filter ----------
+  var filterBtns = document.querySelectorAll('.filter-btn');
+  var projCards = document.querySelectorAll('#projects .proj-card');
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      filterBtns.forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var f = btn.getAttribute('data-filter');
+      projCards.forEach(function(card){
+        card.hidden = !(f === 'all' || card.getAttribute('data-type') === f);
+      });
+    });
+  });
+
+  // ---------- project technical-breakdown toggle ----------
+  document.querySelectorAll('.proj-toggle').forEach(function(btn){
+    var detail = btn.nextElementSibling;
+    btn.addEventListener('click', function(){
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!open));
+      detail.style.maxHeight = open ? '0px' : (detail.scrollHeight + 'px');
+    });
+  });
+
+  // ---------- module table toggle ----------
+  var modToggle = document.getElementById('modToggle');
+  var modTable = document.getElementById('modTable');
+  function refreshModToggleText(){
+    if(!modToggle) return;
+    var dict = I18N[currentLang] || I18N.en;
+    var open = modToggle.getAttribute('aria-expanded') === 'true';
+    modToggle.textContent = open ? dict.mod_toggle_show_fewer : dict.mod_toggle_show_all;
+  }
+  if(modToggle){
+    modToggle.addEventListener('click', function(){
+      var open = modToggle.getAttribute('aria-expanded') === 'true';
+      modToggle.setAttribute('aria-expanded', String(!open));
+      modTable.classList.toggle('expanded', !open);
+      refreshModToggleText();
+    });
+  }
+
+  // ---------- copy email ----------
+  var copyBtn = document.getElementById('copyEmailBtn');
+  if(copyBtn){
+    copyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      var value = copyBtn.getAttribute('data-value');
+      var done = function(){
+        var dict = I18N[currentLang] || I18N.en;
+        copyBtn.textContent = dict.copy_btn_done;
+        copyBtn.classList.add('done');
+        setTimeout(function(){ copyBtn.textContent = dict.copy_btn; copyBtn.classList.remove('done'); }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(value).then(done).catch(function(){});
+      }
+    });
+  }
+})();
 </script>
 </body>
 </html>
